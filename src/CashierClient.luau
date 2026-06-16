@@ -161,6 +161,15 @@ function CashierClient.init(self: CashierClient): ()
 	end)
 end
 
+function CashierClient._purchaseStarted(self: CashierClient): ()
+	if self._purchasing then
+		return
+	end
+
+	self._purchasing = true
+	self.purchaseStarted:Fire()
+end
+
 function CashierClient._purchaseCompleted(self: CashierClient, itemName: string, wasGift: boolean): ()
 	if not self._purchasing then
 		return
@@ -378,14 +387,11 @@ end
     ```
 ]=]
 function CashierClient.purchaseItem(self: CashierClient, itemName: string, ...: any?): ()
-	local result = self._networker:fetch("purchase", itemName, ...)
-
-	if not result then
+	if self._purchasing then
 		return
 	end
 
-	self._purchasing = true
-	self.purchaseStarted:Fire()
+	self._networker:fetch("purchaseItem", itemName, ...)
 end
 
 --[=[
@@ -412,12 +418,7 @@ function CashierClient.gift(self: CashierClient, userId: number, itemName: strin
 		return false
 	end
 
-	local success, message, fromInventory = self._networker:fetch("gift", userId, itemName)
-	if success and not fromInventory then
-		self._purchasing = true
-	end
-
-	return success, message
+	return self._networker:fetch("gift", userId, itemName)
 end
 
 --[=[
@@ -574,14 +575,7 @@ function CashierClient.purchaseLimited(self: CashierClient, limitedName: string)
 		return
 	end
 
-	local result = self._networker:fetch("purchaseLimited", limitedName)
-
-	if not result then
-		return
-	end
-
-	self._purchasing = true
-	self.purchaseStarted:Fire()
+	self._networker:fetch("purchaseLimited", limitedName)
 end
 
 --[=[

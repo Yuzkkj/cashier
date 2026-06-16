@@ -164,7 +164,7 @@ type Limited = {
     Options for initializing the Cashier.
 ]=]
 type InitOptions = {
-	data: { ItemData },
+	itemsData: { ItemData },
 	limitedsCallbacks: { [string]: (player: Player) -> boolean },
 }
 
@@ -202,8 +202,12 @@ local CashierServer = {}
 	local Cashier = require(path.to.Cashier).server
 
 	local items = require(path.to.items)
+	local limitedsCallback = require(path.to.limitedsCallback)
 
-	Cashier:init(items)
+	Cashier:init({
+		itemsData = items,
+		limitedsCallback = limitedsCallback
+	})
 	```
 
 	:::warning
@@ -211,19 +215,19 @@ local CashierServer = {}
 	:::
 ]=]
 function CashierServer.init(self: CashierServer, options: InitOptions): ()
-	self._items = Sift.Array.map(options.data, function(itemData)
+	self._items = Sift.Array.map(options.itemsData, function(itemData)
 		return Sift.Dictionary.removeKeys(itemData, "callback", "predicate")
 	end)
 
 	self._itemsCallback = {}
 	self._itemsPredicate = {}
-	for _, itemData in options.data do
+	for _, itemData in options.itemsData do
 		self._itemsCallback[itemData.name] = itemData.callback
 		self._itemsPredicate[itemData.name] = itemData.predicate
 	end
 
 	self._limiteds = {}
-	self._limitedsCallbacks = options.limitedsCallbacks or {}
+	self._limitedsCallback = options.limitedsCallback or {}
 	self._limitedsDataStore = DataStoreService:GetDataStore("Limiteds")
 
 	self._networker = Networker.server.new("Cashier", self, {
@@ -756,7 +760,7 @@ function CashierServer.addItemToInventory(self: CashierServer, player: Player, i
 		return
 	end
 
-	DataService:update(player, "_pending", function(inventory)
+	DataService:update(player, "_inventory", function(inventory)
 		inventory = inventory or {}
 
 		return Sift.Dictionary.update(inventory, itemName, function(value)
@@ -824,7 +828,6 @@ end
 	@param player Player
 	@param itemName string
 	@param ... any -- Extra params
-	@return boolean
 
 	Prompts the user to purchase the item with the given name.
 
@@ -832,25 +835,25 @@ end
 	local Cashier = require(path.to.Cashier).client
 
 	if not hasVIP then
-		Cashier:purchase(player, "VIP")
+		Cashier:purchaseItem(player, "VIP")
 	end
 	```
 ]=]
-function CashierServer.purchaseItem(self: CashierServer, player: Player, itemName: string, ...: any): boolean
+function CashierServer.purchaseItem(self: CashierServer, player: Player, itemName: string, ...: any): ()
 	local item = self:getItemByName(itemName)
 	if not item then
-		return false
+		return
 	end
 
 	if self:hasItem(player, itemName) then
-		return false
+		return
 	end
 
 	local predicate = self._itemsPredicate[itemName]
 	if predicate then
 		local result = predicate(player, ...)
 		if not result then
-			return false
+			return
 		end
 
 		local params = { ... }
@@ -869,7 +872,7 @@ function CashierServer.purchaseItem(self: CashierServer, player: Player, itemNam
 		MarketplaceService:PromptProductPurchase(player, item.id)
 	end
 
-	return true
+	self._networker:fire(player, "_purchaseStarted")
 end
 
 --[=[
@@ -880,7 +883,6 @@ end
     @param itemName string
     @return boolean -- Tells if the gift was successfully initiated
     @return string? -- An error message in case the user could not gift the other one
-    @return boolean? -- Tells if the gift was successfully processed from the player's inventory
 
     Prompts the user to purchase the item for the other player.
 ]=]
@@ -912,9 +914,9 @@ function CashierServer.gift(
 
 	self._playerData:get(player).gifting = userId
 
-	local playerInventory = DataService:get(player, "_pending")
+	local playerInventory = DataService:get(player, "_inventory")
 	if playerInventory and playerInventory[itemName] then
-		DataService:update(player, "_pending", function(inventory)
+		DataService:update(player, "_inventory", function(inventory)
 			inventory = Sift.Dictionary.update(inventory, itemName, function(value)
 				return if value - 1 > 0 then value - 1 else nil
 			end)
@@ -927,12 +929,13 @@ function CashierServer.gift(
 		end)
 
 		self:_processGift(player, itemName)
-		return true, nil, true
+		return true
 	end
 
 	MarketplaceService:PromptProductPurchase(player, item.giftId)
+	self._networker:fire(player, "_purchaseStarted")
 
-	return true, nil, false
+	return true
 end
 
 --[=[
@@ -1180,7 +1183,6 @@ end
 	@within CashierServer
 	@param player Player
 	@param limitedName string
-	@return boolean
 
 	Validates and prompts the player to purchase a limited item. Checks that the limited exists,
 	has stock remaining, is not expired, and respects the one-per-player constraint.
@@ -1194,27 +1196,27 @@ end
 	end
 	```
 ]=]
-function CashierServer.purchaseLimited(self: CashierServer, player: Player, limitedName: string): boolean
+function CashierServer.purchaseLimited(self: CashierServer, player: Player, limitedName: string): ()
 	local limited = self:getLimitedByName(limitedName)
 	if not limited then
-		return false
+		return
 	end
 
 	if limited.stockLeft <= 0 then
-		return false
+		return
 	end
 
 	if limited.expiration and limited.expiration <= os.time() then
-		return false
+		return
 	end
 
 	if limited.onePerPlayer and self:hasLimited(player, limitedName) then
-		return false
+		return
 	end
 
 	MarketplaceService:PromptProductPurchase(player, limited.id)
 
-	return true
+	self._networker:fire(player, "_purchaseStarted")
 end
 
 --[=[
@@ -1274,7 +1276,7 @@ function CashierServer._processLimitedPurchase(self: CashierServer, player: Play
 	end)
 
 	-- Call the limited's callback
-	local callback = self._limitedsCallbacks[limited.name]
+	local callback = self._limitedsCallback[limited.name]
 	if callback then
 		callback(player)
 	end
@@ -1287,7 +1289,7 @@ type CashierServer = typeof(CashierServer) & {
 	_itemsCallback: { [string]: (player: Player, ...any?) -> boolean },
 	_itemsPredicate: { [string]: (player: Player, ...any) -> boolean },
 	_limiteds: { Limited },
-	_limitedsCallbacks: { [string]: (player: Player) -> boolean },
+	_limitedsCallback: { [string]: (player: Player) -> boolean },
 	_limitedsDataStore: DataStore,
 	_networker: Networker.Server,
 	_pendingParams: { [Player]: { [string]: { any } } },
