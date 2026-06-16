@@ -1,9 +1,6 @@
 {
-  "name": "packages",
+  "name": "cashier",
   "tree": {
-    "$path": "Packages",
-    "cashier": {
-      "$path": "src"
-    }
+    "$path": "src"
   }
 }

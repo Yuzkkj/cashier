@@ -7,7 +7,7 @@ classOrder = [
 gitSourceBranch = "main"
 
 [docusaurus]
-tagline = "A clean, robust Roblox library to streamline Gamepass, Developer Product, and Gifting management."
+tagline = "A clean, robust Roblox library to streamline Gamepass, Developer Product, Gifting, and Limited items management."
 
 [home]
 enabled = true
@@ -23,3 +23,12 @@ description = "First-class player-to-player gifting featuring automatic offline 
 [[home.features]]
 title = "Secure Transactions"
 description = "Fully automated and secure process-receipt loops with built-in purchase history logging. Eliminates duplicate-granting bugs and transaction exploits."
+
+[[home.features]]
+title = "Stock-Limited Items"
+description = "Time-bound and stock-capped items with real-time client sync. Supports one-per-player constraints, expiration, and dynamic stock management."
+
+[[navbar.items]]
+href = "https://github.com/yuzkkj/monetization-service"
+label = "GitHub"
+position = "right"
