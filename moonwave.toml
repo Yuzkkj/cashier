@@ -1,0 +1,25 @@
+title = "Cashier"
+classOrder = [
+	"CashierServer",
+	"CashierClient"
+]
+
+gitSourceBranch = "main"
+
+[docusaurus]
+tagline = "A clean, robust Roblox library to streamline Gamepass, Developer Product, and Gifting management."
+
+[home]
+enabled = true
+
+[[home.features]]
+title = "Unified Configuration"
+description = "Register Gamepasses, Developer Products, and Custom Semipasses in a single centralized config. Bind custom rewards, permissions, and callbacks with ease."
+
+[[home.features]]
+title = "Robust Gifting Support"
+description = "First-class player-to-player gifting featuring automatic offline delivery, session-safe tracking, and smart fallback rewards if delivery fails."
+
+[[home.features]]
+title = "Secure Transactions"
+description = "Fully automated and secure process-receipt loops with built-in purchase history logging. Eliminates duplicate-granting bugs and transaction exploits."

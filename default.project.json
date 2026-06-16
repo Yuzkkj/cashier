@@ -1,0 +1,9 @@
+{
+  "name": "packages",
+  "tree": {
+    "$path": "Packages",
+    "cashier": {
+      "$path": "src"
+    }
+  }
+}
