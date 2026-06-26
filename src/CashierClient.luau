@@ -138,6 +138,10 @@ function CashierClient.init(self: CashierClient): ()
 			return
 		end
 
+		if wasPurchased then
+			return
+		end
+
 		self._purchasing = false
 		self.purchaseFinished:Fire(item.name, wasPurchased, false)
 	end)

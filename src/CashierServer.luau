@@ -322,6 +322,7 @@ function CashierServer.init(self: CashierServer, options: InitOptions): ()
 		end
 
 		self:giveItem(player, item.name)
+		self._networker:fire(player, "_purchaseCompleted", item.name, false)
 		self.purchaseCompleted:Fire({
 			player = player,
 			item = item.name,
