@@ -258,7 +258,7 @@ function CashierServer.init(self: CashierServer, options: InitOptions): ()
 			for _, giftData in gifts do
 				self:giveItem(player, giftData.item)
 
-				self._networker:fire(player, "onGiftReceived", giftData)
+				self._networker:fire(player, "_onGiftReceived", giftData)
 			end
 
 			DataService:set(player, "_gifts", nil)
@@ -909,6 +909,10 @@ function CashierServer.gift(
 
 	local recipientItems = recipientProfile.Data["_items"]
 	local hasItem = recipientItems and Sift.Set.has(recipientItems, itemName)
+		or recipientProfile
+			and Sift.Array.findWhere(recipientProfile.Data["_gifts"], function(giftData)
+				return giftData.item == itemName
+			end) ~= nil
 	if hasItem then
 		return false, `User already owns this item`, false
 	end
