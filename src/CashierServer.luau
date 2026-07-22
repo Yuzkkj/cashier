@@ -912,7 +912,7 @@ function CashierServer.gift(
 	end
 
 	local recipientItems = recipientProfile.Data["_items"]
-	local hasItem = item.giftId ~= nil
+	local hasItem = item.type ~= "DevProduct"
 		and (
 			recipientItems and Sift.Set.has(recipientItems, itemName)
 			or recipientProfile
