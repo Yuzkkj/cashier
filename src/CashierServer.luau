@@ -347,7 +347,7 @@ function CashierServer.init(self: CashierServer, options: InitOptions): ()
 
 				local limited = self:getLimitedById(receiptInfo.ProductId)
 				if limited then
-					self:_processLimitedPurchase(player, limited)
+					task.spawn(self._processLimitedPurchase, self, player, limited)
 
 					self._networker:fire(player, "_purchaseCompleted", limited.name, false)
 					self.purchaseCompleted:Fire({
@@ -366,7 +366,7 @@ function CashierServer.init(self: CashierServer, options: InitOptions): ()
 				end
 
 				if self:isGiftId(receiptInfo.ProductId) then
-					self:_processGift(player, receiptInfo)
+					task.spawn(self._processGift, self, player, receiptInfo)
 
 					return true
 				else
@@ -929,7 +929,12 @@ function CashierServer.gift(
 			end
 		end)
 
-		self:_processGift(player, itemName)
+		task.spawn(
+			self._processGift,
+			self,
+			player,
+			{ ProductId = item.id, CurrencySpent = self:getItemPrice(itemName) }
+		)
 		return true
 	end
 
