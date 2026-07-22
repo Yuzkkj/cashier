@@ -183,10 +183,6 @@ function CashierClient._purchaseCompleted(self: CashierClient, itemName: string,
 	self.purchaseFinished:Fire(itemName, true, wasGift)
 end
 
-function CashierClient._onGiftReceived(self: CashierClient, giftData: GiftData): ()
-	self:onGiftReceived(giftData)
-end
-
 --[=[
     @method getAllItems
     @within CashierClient

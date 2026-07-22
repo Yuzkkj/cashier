@@ -1,5 +1,6 @@
 local DataStoreService = game:GetService("DataStoreService")
 local MarketplaceService = game:GetService("MarketplaceService")
+local MessagingService = game:GetService("MessagingService")
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 
@@ -258,7 +259,7 @@ function CashierServer.init(self: CashierServer, options: InitOptions): ()
 			for _, giftData in gifts do
 				self:giveItem(player, giftData.item)
 
-				self._networker:fire(player, "_onGiftReceived", giftData)
+				self._networker:fire(player, "onGiftReceived", giftData)
 			end
 
 			DataService:set(player, "_gifts", nil)
@@ -288,9 +289,15 @@ function CashierServer.init(self: CashierServer, options: InitOptions): ()
 		self._pendingParams[player] = nil
 	end)
 
-	DataService:addGlobalCallback("_gift", function(player, giftData: GiftData)
-		self:giveItem(player, giftData.item)
+	MessagingService:SubscribeAsync("_gift", function(message)
+		local player = Players:GetPlayerByUserId(message.Data.userId)
+		if not player then
+			return
+		end
 
+		local giftData = message.Data.giftData
+
+		self:giveItem(player, giftData.item)
 		self._networker:fire(player, "onGiftReceived", giftData)
 
 		DataService:update(player, "_gifts", function(gifts)
@@ -818,7 +825,16 @@ function CashierServer.addGift(self: CashierServer, userId: number, giftData: Gi
 		recipientProfile:SetAsync()
 	end
 
-	DataService:sendGlobalMessage("_gift", userId, giftData)
+	local s, err = pcall(function()
+		MessagingService:PublishAsync("_gift", {
+			userId = userId,
+			giftData = giftData,
+		})
+	end)
+
+	if not s then
+		warn(err)
+	end
 
 	return true
 end
