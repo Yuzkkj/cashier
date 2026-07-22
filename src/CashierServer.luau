@@ -912,12 +912,15 @@ function CashierServer.gift(
 	end
 
 	local recipientItems = recipientProfile.Data["_items"]
-	local hasItem = recipientItems and Sift.Set.has(recipientItems, itemName)
-		or recipientProfile
-			and recipientProfile.Data["_gifts"]
-			and Sift.Array.findWhere(recipientProfile.Data["_gifts"], function(giftData)
-				return giftData.item == itemName
-			end) ~= nil
+	local hasItem = item.giftId ~= nil
+		and (
+			recipientItems and Sift.Set.has(recipientItems, itemName)
+			or recipientProfile
+				and recipientProfile.Data["_gifts"]
+				and Sift.Array.findWhere(recipientProfile.Data["_gifts"], function(giftData)
+					return giftData.item == itemName
+				end) ~= nil
+		)
 	if hasItem then
 		return false, `User already owns this item`, false
 	end
