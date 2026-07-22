@@ -258,7 +258,6 @@ function CashierServer.init(self: CashierServer, options: InitOptions): ()
 		if gifts and #gifts > 0 then
 			for _, giftData in gifts do
 				self:giveItem(player, giftData.item)
-
 				self._networker:fire(player, "onGiftReceived", giftData)
 			end
 
@@ -374,6 +373,10 @@ function CashierServer.init(self: CashierServer, options: InitOptions): ()
 
 				if self:isGiftId(receiptInfo.ProductId) then
 					task.spawn(self._processGift, self, player, receiptInfo)
+					self._networker:fire(player, "onGiftReceived", {
+						from = player.UserId,
+						item = item.name,
+					})
 
 					return true
 				else
@@ -963,6 +966,11 @@ function CashierServer.gift(
 			player,
 			{ ProductId = item.id, CurrencySpent = self:getItemPrice(itemName) }
 		)
+		self._networker:fire(player, "onGiftReceived", {
+			from = player.UserId,
+			item = item.name,
+		})
+
 		return true
 	end
 
