@@ -893,6 +893,10 @@ function CashierServer.gift(
 	userId: number,
 	itemName: string
 ): (boolean, string?, boolean?)
+	if userId == player.UserId then
+		return false, "You cannot gift yourself", false
+	end
+
 	local item = self:getItemByName(itemName)
 	if not item then
 		return false, `No item found with name "{itemName}"`, false
@@ -910,6 +914,7 @@ function CashierServer.gift(
 	local recipientItems = recipientProfile.Data["_items"]
 	local hasItem = recipientItems and Sift.Set.has(recipientItems, itemName)
 		or recipientProfile
+			and recipientProfile.Data["_gifts"]
 			and Sift.Array.findWhere(recipientProfile.Data["_gifts"], function(giftData)
 				return giftData.item == itemName
 			end) ~= nil
