@@ -373,10 +373,6 @@ function CashierServer.init(self: CashierServer, options: InitOptions): ()
 
 				if self:isGiftId(receiptInfo.ProductId) then
 					task.spawn(self._processGift, self, player, receiptInfo)
-					self._networker:fire(player, "onGiftReceived", {
-						from = player.UserId,
-						item = item.name,
-					})
 
 					return true
 				else
@@ -486,7 +482,13 @@ function CashierServer._processGift(self: CashierServer, player: Player, receipt
 					local didGrantRecipient = self:giveItem(recipient, item.name)
 					if not didGrantRecipient then
 						self:addItemToInventory(player, item.name)
+						return
 					end
+
+					self._networker:fire(recipient, "onGiftReceived", {
+						item = item.name,
+						from = player.UserId,
+					})
 				else
 					local didAdded = self:addGift(recipientId, {
 						item = item.name,
@@ -966,10 +968,6 @@ function CashierServer.gift(
 			player,
 			{ ProductId = item.id, CurrencySpent = self:getItemPrice(itemName) }
 		)
-		self._networker:fire(player, "onGiftReceived", {
-			from = player.UserId,
-			item = item.name,
-		})
 
 		return true
 	end
