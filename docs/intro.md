@@ -8,7 +8,7 @@ sidebar_position: 1
 Cashier is designed to work alongside [DataService](https://leifstout.github.io/dataService) by Leif Stout for persistent player data. Make sure DataService is set up in your project before using Cashier.
 :::
 
-Cashier handles all the boilerplate around in-game purchases so you can focus on what your items actually do. Gamepasses, developer products, gifting, and stock-limited items — all from a single config.
+Cashier handles all the boilerplate around in-game purchases so you can focus on what your items actually do. Gamepasses, developer products, and gifting — all from a single config.
 
 ## Installation
 
@@ -38,32 +38,24 @@ local Cashier = require(path.to.Cashier).server
 DataService:init() -- DataService must be initialized first
 
 Cashier:init({
-    data = {
-        {
-            name = "VIP",
-            type = "Gamepass",
-            id = 123456,
-            giftId = 654321,
-            callback = function(player: Player)
-                DataService:arrayInsert(player, "titles", "VIP")
-                return true
-            end,
-        },
-        {
-            name = "500 Coins",
-            type = "DevProduct",
-            id = 789012,
-            callback = function(player: Player)
-                DataService:update(player, "coins", function(coins)
-                    return coins + 500
-                end)
-                return true
-            end,
-        },
+    {
+        name = "VIP",
+        type = "Gamepass",
+        id = 123456,
+        giftId = 654321,
+        callback = function(player: Player)
+            DataService:arrayInsert(player, "titles", "VIP")
+            return true
+        end,
     },
-    limitedsCallbacks = {
-        ["Exclusive Sword"] = function(player: Player)
-            DataService:arrayInsert(player, "weapons", "Exclusive Sword")
+    {
+        name = "500 Coins",
+        type = "DevProduct",
+        id = 789012,
+        callback = function(player: Player)
+            DataService:update(player, "coins", function(coins)
+                return coins + 500
+            end)
             return true
         end,
     },
@@ -165,52 +157,35 @@ if Cashier:hasItem(player, "VIP") then
 end
 ```
 
-## Limited Items
+## Creating Limited Items
 
-Limiteds are stock-capped items that can expire. They're stored in a DataStore and synced to all clients in real time.
-
-### Adding a Limited
+While Cashier does not natively manage limited item state, Cashier can be used to make limited items. You can easily turn any item into a limited stock item by using a `predicate` to check if there is stock left before prompting the purchase and a `callback` to decrease the remaining amount when an item is bought.
 
 ```lua
--- Server
-Cashier:addLimited({
+-- Example: Stock-limited item using predicate and callback
+local stockLeft = 100
+
+{
     name = "Exclusive Sword",
-    id = 333444, -- Developer product id
-    initialStock = 100,
-    stockLeft = 100,
-    onePerPlayer = true,
-    expiration = os.time() + 86400, -- Available for 24 hours
-})
+    type = "DevProduct",
+    id = 333444,
+    predicate = function(player: Player)
+        -- Prevent purchase if no stock remains
+        return stockLeft > 0
+    end,
+    callback = function(player: Player)
+        if stockLeft <= 0 then
+            return false
+        end
+
+        stockLeft -= 1
+        DataService:arrayInsert(player, "weapons", "Exclusive Sword")
+        return true
+    end,
+}
 ```
 
-### Purchasing a Limited
-
-```lua
--- Client
-Cashier:purchaseLimited("Exclusive Sword")
-```
-
-The client checks stock and expiration locally before even asking the server. The server re-validates everything before prompting.
-
-### Reacting to Changes
-
-The `limitedChanged` signal fires whenever a limited's stock or expiration updates:
-
-```lua
--- Client
-Cashier.limitedChanged:Connect(function(limited)
-    print(limited.name, "now has", limited.stockLeft, "left")
-end)
-```
-
-### Managing Stock and Time
-
-```lua
--- Server
-Cashier:addStockToLimited("Exclusive Sword", 50)
-Cashier:addTimeToLimited("Exclusive Sword", 3600) -- +1 hour
-Cashier:removeLimited("Exclusive Sword")
-```
+When a player attempts to purchase `"Exclusive Sword"`, Cashier checks `predicate` on the server before displaying the purchase prompt. Once the purchase succeeds, `callback` runs, decrements the available stock, and grants the item reward.
 
 ## Item Types
 
@@ -224,11 +199,10 @@ Cashier:removeLimited("Exclusive Sword")
 
 - Always initialize `DataService` before `Cashier` on the server.
 - The `callback` should return `true` if the item was successfully granted. Returning `false` will cause the receipt to be retried later.
-- Limiteds use an oversell strategy: once a player is in the purchase flow, the item is always delivered even if stock hits zero from another purchase. Stock acts as a soft cap for new prompts.
 
 ## Next Steps
 
 Check the full API reference for every method, signal, and type available:
 
-- [CashierServer](/api/CashierServer) — server-side item registration, purchase processing, gifting, and limiteds management.
-- [CashierClient](/api/CashierClient) — client-side purchase prompts, item queries, and real-time limited updates.
+- [CashierServer](/api/CashierServer) — server-side item registration, purchase processing, and gifting management.
+- [CashierClient](/api/CashierClient) — client-side purchase prompts and item queries.

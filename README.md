@@ -1,6 +1,6 @@
 # Cashier
 
-A clean, robust Roblox library to streamline Gamepass, Developer Product, Gifting, and Limited items management.
+A clean, robust Roblox library to streamline Gamepass, Developer Product, and Gifting management.
 
 # Documentation
 
