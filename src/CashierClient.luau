@@ -36,27 +36,6 @@ type Item = {
 }
 
 --[=[
-	@interface Limited
-	@within CashierClient
-	.name string -- The name of the limited
-	.id number -- The developer product id linked to the limited
-	.initialStock number -- The initial stock when the limited was created
-	.stockLeft number -- The remaining stock available for purchase
-	.onePerPlayer boolean -- Determines if a player can only purchase this limited once
-	.expiration number? -- The Unix timestamp at which the limited expires
-
-	Configuration and state data for a stock-limited item.
-]=]
-type Limited = {
-	name: string,
-	id: number,
-	initialStock: number,
-	stockLeft: number,
-	onePerPlayer: boolean,
-	expiration: number?,
-}
-
---[=[
     @interface GiftData
     @within CashierClient
     .item string -- The name of the item
@@ -79,8 +58,7 @@ local localPlayer = Players.LocalPlayer
 --[=[
     @class CashierClient
 
-    The client-side of Cashier. Handles purchase prompts, item queries, gift sending,
-    and limited items for the local player.
+    The client-side of Cashier. Handles purchase prompts, item queries and gift sending.
 ]=]
 local CashierClient = {}
 
@@ -119,14 +97,6 @@ function CashierClient.init(self: CashierClient): ()
         A signal that fires when a purchase prompt is closed, providing the name of the item, a boolean indicating whether the purchase was completed successfully, and a boolean indicating if the purchase was a gift.
     ]=]
 	self.purchaseFinished = Signal.new()
-
-	--[=[
-		@prop limitedChanged Signal<Limited>
-		@within CashierClient
-
-		A signal that fires whenever a limited's data changes, providing the updated limited info.
-	]=]
-	self.limitedChanged = Signal.new()
 
 	MarketplaceService.PromptGamePassPurchaseFinished:Connect(function(player, gamepassId, wasPurchased)
 		if player ~= localPlayer then
@@ -443,183 +413,12 @@ end
 ]=]
 function CashierClient.onGiftReceived(self: CashierClient, giftData: GiftData) end
 
-function CashierClient._onLimitedChanged(self: CashierClient, limited: Limited): ()
-	local limiteds = self:getAllLimiteds()
-	local index = Sift.Array.findWhere(limiteds, function(l: Limited)
-		return l.name == limited.name
-	end)
-
-	if index then
-		self._limiteds[index] = limited
-	else
-		table.insert(self._limiteds, limited)
-	end
-
-	self.limitedChanged:Fire(limited)
-end
-
-function CashierClient._onLimitedRemoved(self: CashierClient, limitedName: string): ()
-	local limiteds = self:getAllLimiteds()
-	local index = Sift.Array.findWhere(limiteds, function(l: Limited)
-		return l.name == limitedName
-	end)
-
-	if index then
-		table.remove(self._limiteds, index)
-	end
-end
-
---[=[
-	@method getAllLimiteds
-	@within CashierClient
-	@return { Limited }
-
-	Returns an array with all currently available limited items.
-
-	```lua
-	local Cashier = require(path.to.Cashier).client
-
-	for _, limited in Cashier:getAllLimiteds() do
-		print(limited.name, limited.stockLeft)
-	end
-	```
-]=]
-function CashierClient.getAllLimiteds(self: CashierClient): { Limited }
-	if not self._limiteds then
-		self._limiteds = self._networker:fetch("getAllLimiteds")
-	end
-
-	return self._limiteds
-end
-
---[=[
-	@method getLimitedByName
-	@within CashierClient
-	@param name string
-	@return Limited?
-
-	Retrieves a limited item by its name. Returns `nil` if no limited with the given name exists.
-
-	```lua
-	local Cashier = require(path.to.Cashier).client
-
-	local limited = Cashier:getLimitedByName("Exclusive Sword")
-	if limited then
-		print(limited.stockLeft)
-	end
-	```
-]=]
-function CashierClient.getLimitedByName(self: CashierClient, name: string): Limited?
-	local limiteds = self:getAllLimiteds()
-	local index = Sift.Array.findWhere(limiteds, function(limited: Limited)
-		return limited.name == name
-	end)
-
-	return limiteds[index]
-end
-
---[=[
-	@method getLimitedFromId
-	@within CashierClient
-	@param id number
-	@return Limited?
-
-	Retrieves a limited item by its developer product id. Returns `nil` if no limited with the given id exists.
-
-	```lua
-	local Cashier = require(path.to.Cashier).client
-
-	local limited = Cashier:getLimitedFromId(123456)
-	if limited then
-		print(limited.name, limited.stockLeft)
-	end
-	```
-]=]
-function CashierClient.getLimitedFromId(self: CashierClient, id: number): Limited?
-	local limiteds = self:getAllLimiteds()
-	local index = Sift.Array.findWhere(limiteds, function(limited: Limited)
-		return limited.id == id
-	end)
-
-	return limiteds[index]
-end
-
---[=[
-	@method purchaseLimited
-	@within CashierClient
-	@param limitedName string
-
-	Prompts the local player to purchase a limited item. Performs client-side validation
-	(stock, expiration, one-per-player) before requesting the server.
-
-	```lua
-	local Cashier = require(path.to.Cashier).client
-
-	local button = script.Parent
-	button.Activated:Connect(function()
-		Cashier:purchaseLimited("Exclusive Sword")
-	end)
-	```
-]=]
-function CashierClient.purchaseLimited(self: CashierClient, limitedName: string): ()
-	local limited = self:getLimitedByName(limitedName)
-	if not limited then
-		return
-	end
-
-	if limited.stockLeft <= 0 then
-		return
-	end
-
-	if limited.expiration and limited.expiration <= os.time() then
-		return
-	end
-
-	if limited.onePerPlayer and self:hasLimited(limitedName) then
-		return
-	end
-
-	self._networker:fetch("purchaseLimited", limitedName)
-end
-
---[=[
-	@method hasLimited
-	@within CashierClient
-	@param limitedName string
-	@return boolean
-
-	Checks if the local player owns the given limited item.
-
-	```lua
-	local Cashier = require(path.to.Cashier).client
-
-	if Cashier:hasLimited("Exclusive Sword") then
-		print("Player owns the Exclusive Sword!")
-	end
-	```
-]=]
-function CashierClient.hasLimited(self: CashierClient, limitedName: string): boolean
-	if not self:getLimitedByName(limitedName) then
-		warn(`No limited with name "{limitedName}"`)
-		return
-	end
-
-	local limiteds = DataService:get("_limiteds")
-	if not limiteds then
-		return false
-	end
-
-	return Sift.Set.has(limiteds, limitedName)
-end
-
 type CashierClient = typeof(CashierClient) & {
 	_items: { Item },
-	_limiteds: { Limited },
 	_purchasing: boolean,
 	_networker: Networker.Client,
 	purchaseStarted: Signal.Signal<>,
 	purchaseFinished: Signal.Signal<string, boolean, boolean>,
-	limitedChanged: Signal.Signal<Limited>,
 }
 
 return CashierClient :: CashierClient

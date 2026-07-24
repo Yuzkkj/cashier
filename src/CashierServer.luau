@@ -137,49 +137,15 @@ type PurchaseData = {
 	recipientId: number?,
 }
 
---[=[
-	@interface Limited
-	@within CashierServer
-	.name string -- The name of the limited
-	.id number -- The developer product id linked to the limited
-	.initialStock number -- The initial stock when the limited was created
-	.stockLeft number -- The remaining stock available for purchase
-	.onePerPlayer boolean -- Determines if a player can only purchase this limited once
-	.expiration number? -- The Unix timestamp at which the limited expires
-
-	Configuration and state data for a stock-limited item.
-]=]
-type Limited = {
-	name: string,
-	id: number,
-	initialStock: number,
-	stockLeft: number,
-	onePerPlayer: boolean,
-	expiration: number?,
-}
-
---[=[
-    @type InitOptions { ItemData }
-    @within CashierServer
-
-    Options for initializing the Cashier.
-]=]
-type InitOptions = {
-	itemsData: { ItemData },
-	limitedsCallbacks: { [string]: (player: Player) -> boolean },
-}
-
 local DataService = require(script.Parent.Parent.DataService).server
 local Networker = require(script.Parent.Parent.Networker)
 local ServicePlayerData = require(script.Parent.Parent.ServicePlayerData)
 local Sift = require(script.Parent.Parent.Sift)
 local Signal = require(script.Parent.Parent.Signal)
 
-local DATA_STORE_KEY = "Limiteds"
 local PLAYER_DATA_TEMPLATE = {
 	gifting = nil,
 }
-local UPDATE_INTERVAL = 60
 
 local purchaseHistoryStore = DataStoreService:GetDataStore("PurchaseHistory")
 
@@ -187,7 +153,7 @@ local purchaseHistoryStore = DataStoreService:GetDataStore("PurchaseHistory")
     @class CashierServer
 
     The server-side of Cashier. Handles item registration, purchase processing, gamepass tracking,
-    gifting, inventory management, and stock-limited items.
+    gifting and inventory management.
 ]=]
 local CashierServer = {}
 
@@ -203,40 +169,30 @@ local CashierServer = {}
 	local Cashier = require(path.to.Cashier).server
 
 	local items = require(path.to.items)
-	local limitedsCallback = require(path.to.limitedsCallback)
 
-	Cashier:init({
-		itemsData = items,
-		limitedsCallback = limitedsCallback
-	})
+	Cashier:init(items)
 	```
 
 	:::warning
 	`:init(...)` should be called before using any other method.
 	:::
 ]=]
-function CashierServer.init(self: CashierServer, options: InitOptions): ()
-	self._items = Sift.Array.map(options.itemsData, function(itemData)
+function CashierServer.init(self: CashierServer, itemsData: { ItemData }): ()
+	self._items = Sift.Array.map(itemsData, function(itemData)
 		return Sift.Dictionary.removeKeys(itemData, "callback", "predicate")
 	end)
 
 	self._itemsCallback = {}
 	self._itemsPredicate = {}
-	for _, itemData in options.itemsData do
+	for _, itemData in itemsData do
 		self._itemsCallback[itemData.name] = itemData.callback
 		self._itemsPredicate[itemData.name] = itemData.predicate
 	end
-
-	self._limiteds = {}
-	self._limitedsCallback = options.limitedsCallback or {}
-	self._limitedsDataStore = DataStoreService:GetDataStore("Limiteds")
 
 	self._networker = Networker.server.new("Cashier", self, {
 		self.getAllItems,
 		self.purchaseItem,
 		self.gift,
-		self.getAllLimiteds,
-		self.purchaseLimited,
 	})
 	self._playerData = ServicePlayerData.new(PLAYER_DATA_TEMPLATE)
 	self._pendingParams = {}
@@ -249,8 +205,6 @@ function CashierServer.init(self: CashierServer, options: InitOptions): ()
 		A signal that fires when a player buys an item, providing the `PurchaseData`.
 	]=]
 	self.purchaseCompleted = Signal.new()
-
-	self:_updateLimiteds()
 
 	local function onPlayerAdded(player: Player): ()
 		DataService:waitForData(player)
@@ -351,20 +305,6 @@ function CashierServer.init(self: CashierServer, options: InitOptions): ()
 					return nil
 				end
 
-				local limited = self:getLimitedById(receiptInfo.ProductId)
-				if limited then
-					task.spawn(self._processLimitedPurchase, self, player, limited)
-
-					self._networker:fire(player, "_purchaseCompleted", limited.name, false)
-					self.purchaseCompleted:Fire({
-						player = player,
-						item = limited.name,
-						robuxSpent = receiptInfo.CurrencySpent,
-					})
-
-					return true
-				end
-
 				local item = self:getItemById(receiptInfo.ProductId)
 				if not item then
 					warn(`No item found with id {receiptInfo.ProductId}`)
@@ -401,62 +341,6 @@ function CashierServer.init(self: CashierServer, options: InitOptions): ()
 		return if result == true
 			then Enum.ProductPurchaseDecision.PurchaseGranted
 			else Enum.ProductPurchaseDecision.NotProcessedYet
-	end
-
-	task.spawn(function()
-		while true do
-			self:_updateLimiteds()
-			task.wait(UPDATE_INTERVAL)
-		end
-	end)
-end
-
-function CashierServer._updateLimiteds(self: CashierServer): ()
-	local success, result = pcall(function()
-		return self._limitedsDataStore:GetAsync(DATA_STORE_KEY)
-	end)
-
-	if not success then
-		warn("Failed to get limiteds", result)
-		return
-	end
-
-	local current: { Limited } = result or {}
-	local previous = self._limiteds or {}
-
-	-- Remove expired limiteds
-	local now = os.time()
-	current = Sift.Array.filter(current, function(limited: Limited)
-		return not limited.expiration or limited.expiration > now
-	end)
-
-	self._limiteds = current
-
-	-- Diff: find limiteds that changed or were added/removed
-	for _, limited in current do
-		local previousLimited = Sift.Array.findWhere(previous, function(prev: Limited)
-			return prev.name == limited.name
-		end)
-
-		if not previousLimited then
-			self._networker:fireAll("_onLimitedChanged", limited)
-		else
-			local prev = previous[previousLimited]
-			if prev.stockLeft ~= limited.stockLeft or prev.expiration ~= limited.expiration then
-				self._networker:fireAll("_onLimitedChanged", limited)
-			end
-		end
-	end
-
-	-- Notify removals (was in previous but not in current)
-	for _, prev in previous do
-		local stillExists = Sift.Array.findWhere(current, function(limited: Limited)
-			return limited.name == prev.name
-		end)
-
-		if not stillExists then
-			self._networker:fireAll("_onLimitedRemoved", prev.name)
-		end
 	end
 end
 
@@ -978,359 +862,10 @@ function CashierServer.gift(
 	return true
 end
 
---[=[
-	@method getAllLimiteds
-	@within CashierServer
-	@return { Limited }
-
-	Returns an array with all currently available limited items.
-
-	```lua
-	local Cashier = require(path.to.Cashier).server
-
-	for _, limited in Cashier:getAllLimiteds() do
-		print(limited.name, limited.stockLeft)
-	end
-	```
-]=]
-function CashierServer.getAllLimiteds(self: CashierServer): { Limited }
-	return self._limiteds
-end
-
---[=[
-	@method getLimitedByName
-	@within CashierServer
-	@param name string
-	@return Limited?
-
-	Retrieves a limited item by its name. Returns `nil` if no limited with the given name exists.
-
-	```lua
-	local Cashier = require(path.to.Cashier).server
-
-	local limited = Cashier:getLimitedByName("Exclusive Sword")
-	if limited then
-		print(limited.stockLeft)
-	end
-	```
-]=]
-function CashierServer.getLimitedByName(self: CashierServer, name: string): Limited?
-	local index = Sift.Array.findWhere(self._limiteds, function(limited: Limited)
-		return limited.name == name
-	end)
-
-	return self._limiteds[index]
-end
-
---[=[
-	@method getLimitedById
-	@within CashierServer
-	@param id number
-	@return Limited?
-
-	Retrieves a limited item by its developer product id. Returns `nil` if no limited with the given id exists.
-
-	```lua
-	local Cashier = require(path.to.Cashier).server
-
-	local limited = Cashier:getLimitedById(123456)
-	if limited then
-		print(limited.name, limited.stockLeft)
-	end
-	```
-]=]
-function CashierServer.getLimitedById(self: CashierServer, id: number): Limited?
-	local index = Sift.Array.findWhere(self._limiteds, function(limited: Limited)
-		return limited.id == id
-	end)
-
-	return self._limiteds[index]
-end
-
---[=[
-	@method addLimited
-	@within CashierServer
-	@param limited Limited
-
-	Registers a new limited item. Writes it to the DataStore and notifies all connected clients.
-
-	```lua
-	local Cashier = require(path.to.Cashier).server
-
-	Cashier:addLimited({
-		name = "Exclusive Sword",
-		id = 123456,
-		initialStock = 100,
-		stockLeft = 100,
-		onePerPlayer = true,
-		expiration = os.time() + 86400,
-	})
-	```
-]=]
-function CashierServer.addLimited(self: CashierServer, limited: Limited): ()
-	if Sift.Array.findWhere(self._limiteds, function(info: Limited)
-		return info.name == limited.name
-	end) ~= nil then
-		return
-	end
-
-	local success, err = pcall(function()
-		self._limitedsDataStore:UpdateAsync(DATA_STORE_KEY, function(data)
-			data = data or {}
-			table.insert(data, limited)
-			return data
-		end)
-	end)
-
-	if not success then
-		warn("Failed to add limited", err)
-		return
-	end
-
-	self:_updateLimiteds()
-end
-
---[=[
-	@method addStockToLimited
-	@within CashierServer
-	@param limitedName string
-	@param amount number
-
-	Adds stock to an existing limited item. Increments both `stockLeft` and `initialStock`.
-
-	```lua
-	local Cashier = require(path.to.Cashier).server
-
-	Cashier:addStockToLimited("Exclusive Sword", 50)
-	```
-]=]
-function CashierServer.addStockToLimited(self: CashierServer, limitedName: string, amount: number): ()
-	local success, err = pcall(function()
-		self._limitedsDataStore:UpdateAsync(DATA_STORE_KEY, function(data)
-			if not data then
-				return nil
-			end
-
-			for _, limited in data do
-				if limited.name == limitedName then
-					limited.stockLeft += amount
-					limited.initialStock += amount
-					break
-				end
-			end
-
-			return data
-		end)
-	end)
-
-	if not success then
-		warn("Failed to add stock to limited", err)
-		return
-	end
-
-	self:_updateLimiteds()
-end
-
---[=[
-	@method addTimeToLimited
-	@within CashierServer
-	@param limitedName string
-	@param amount number
-
-	Extends the expiration of a limited item by `amount` seconds. If the limited has no expiration set, it starts from the current time.
-
-	```lua
-	local Cashier = require(path.to.Cashier).server
-
-	-- Extend by 1 hour
-	Cashier:addTimeToLimited("Exclusive Sword", 3600)
-	```
-]=]
-function CashierServer.addTimeToLimited(self: CashierServer, limitedName: string, amount: number): ()
-	local success, err = pcall(function()
-		self._limitedsDataStore:UpdateAsync(DATA_STORE_KEY, function(data)
-			if not data then
-				return nil
-			end
-
-			for _, limited in data do
-				if limited.name == limitedName then
-					limited.expiration = (limited.expiration or os.time()) + amount
-					break
-				end
-			end
-
-			return data
-		end)
-	end)
-
-	if not success then
-		warn("Failed to add time to limited", err)
-		return
-	end
-
-	self:_updateLimiteds()
-end
-
---[=[
-	@method removeLimited
-	@within CashierServer
-	@param limitedName string
-
-	Removes a limited item from the DataStore and notifies all connected clients of the removal.
-
-	```lua
-	local Cashier = require(path.to.Cashier).server
-
-	Cashier:removeLimited("Exclusive Sword")
-	```
-]=]
-function CashierServer.removeLimited(self: CashierServer, limitedName: string): ()
-	if Sift.Array.findWhere(self._limiteds, function(info: Limited)
-		return info.name == limitedName
-	end) == nil then
-		return
-	end
-
-	local success, err = pcall(function()
-		self._limitedsDataStore:UpdateAsync(DATA_STORE_KEY, function(data)
-			if not data then
-				return nil
-			end
-
-			local index = Sift.Array.findWhere(data, function(limited)
-				return limited.name == limitedName
-			end)
-
-			if index then
-				table.remove(data, index)
-			end
-
-			return data
-		end)
-	end)
-
-	if not success then
-		warn("Failed to remove limited", err)
-		return
-	end
-
-	self:_updateLimiteds()
-end
-
---[=[
-	@method purchaseLimited
-	@within CashierServer
-	@param player Player
-	@param limitedName string
-
-	Validates and prompts the player to purchase a limited item. Checks that the limited exists,
-	has stock remaining, is not expired, and respects the one-per-player constraint.
-
-	```lua
-	local Cashier = require(path.to.Cashier).server
-
-	local success = Cashier:purchaseLimited(player, "Exclusive Sword")
-	if not success then
-		warn("Could not prompt limited purchase")
-	end
-	```
-]=]
-function CashierServer.purchaseLimited(self: CashierServer, player: Player, limitedName: string): ()
-	local limited = self:getLimitedByName(limitedName)
-	if not limited then
-		return
-	end
-
-	if limited.stockLeft <= 0 then
-		return
-	end
-
-	if limited.expiration and limited.expiration <= os.time() then
-		return
-	end
-
-	if limited.onePerPlayer and self:hasLimited(player, limitedName) then
-		return
-	end
-
-	MarketplaceService:PromptProductPurchase(player, limited.id)
-
-	self._networker:fire(player, "_purchaseStarted")
-end
-
---[=[
-	@method hasLimited
-	@within CashierServer
-	@param player Player
-	@param limitedName string
-	@return boolean
-
-	Checks if the player owns the given limited item.
-
-	```lua
-	local Cashier = require(path.to.Cashier).server
-
-	if Cashier:hasLimited(player, "Exclusive Sword") then
-		print("Player already owns this limited!")
-	end
-	```
-]=]
-function CashierServer.hasLimited(self: CashierServer, player: Player, limitedName: string): boolean
-	if not self:getLimitedByName(limitedName) then
-		warn(`No limited with name "{limitedName}"`)
-		return false
-	end
-
-	local playerLimiteds = DataService:get(player, "_limiteds")
-	if not playerLimiteds then
-		return false
-	end
-
-	return Sift.Set.has(playerLimiteds, limitedName)
-end
-
-function CashierServer._processLimitedPurchase(self: CashierServer, player: Player, limited: Limited): ()
-	-- Give the limited to the player's data
-	DataService:update(player, "_limiteds", function(playerLimiteds)
-		playerLimiteds = playerLimiteds or {}
-		return Sift.Set.add(playerLimiteds, limited.name)
-	end)
-
-	-- Decrement stock (soft cap, can go below 0 in race conditions)
-	pcall(function()
-		self._limitedsDataStore:UpdateAsync(DATA_STORE_KEY, function(data)
-			if not data then
-				return nil
-			end
-
-			for _, entry in data do
-				if entry.name == limited.name then
-					entry.stockLeft -= 1
-					break
-				end
-			end
-
-			return data
-		end)
-	end)
-
-	-- Call the limited's callback
-	local callback = self._limitedsCallback[limited.name]
-	if callback then
-		callback(player)
-	end
-
-	self:_updateLimiteds()
-end
-
 type CashierServer = typeof(CashierServer) & {
 	_items: { Item },
 	_itemsCallback: { [string]: (player: Player, ...any?) -> boolean },
 	_itemsPredicate: { [string]: (player: Player, ...any) -> boolean },
-	_limiteds: { Limited },
-	_limitedsCallback: { [string]: (player: Player) -> boolean },
-	_limitedsDataStore: DataStore,
 	_networker: Networker.Server,
 	_pendingParams: { [Player]: { [string]: { any } } },
 	_playerData: ServicePlayerData.ServicePlayerData<{
