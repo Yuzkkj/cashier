@@ -1,19 +1,6 @@
 {
-  "name": "Cashier",
+  "name": "cashier",
   "tree": {
-    "$className": "DataModel",
-    "ReplicatedStorage": {
-      "Packages": {
-        "$path": "Packages",
-        "Cashier": {
-          "$path": "src"
-        }
-      }
-    },
-    "ServerScriptService": {
-      "ServerPackages": {
-        "$path": "ServerPackages"
-      }
-    }
+    "$path": "src"
   }
 }

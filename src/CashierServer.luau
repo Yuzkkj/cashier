@@ -1,18 +1,17 @@
 local DataStoreService = game:GetService("DataStoreService")
 local MarketplaceService = game:GetService("MarketplaceService")
 local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
-local ServerScriptService = game:GetService("ServerScriptService")
 
 if not RunService:IsServer() then
 	return {} :: CashierServer
 end
 
-local ProfileStore = require(ServerScriptService.ServerPackages.ProfileStore)
-local Networker = require(ReplicatedStorage.Packages.Networker)
-local Sift = require(ReplicatedStorage.Packages.Sift)
-local Signal = require(ReplicatedStorage.Packages.Signal)
+local Packages = script.Parent.Parent
+local ProfileStore = if RunService:IsServer() then require(Packages.ProfileStore) else nil :: any
+local Networker = require(Packages.Networker)
+local Sift = require(Packages.Sift)
+local Signal = require(Packages.Signal)
 
 local PROFILE_STORE_INDEX = "Cashier"
 local TEMPLATE = {

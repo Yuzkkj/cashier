@@ -1,15 +1,15 @@
 local MarketplaceService = game:GetService("MarketplaceService")
 local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
 if not RunService:IsClient() then
 	return {} :: CashierClient
 end
 
-local Networker = require(ReplicatedStorage.Packages.Networker)
-local Sift = require(ReplicatedStorage.Packages.Sift)
-local Signal = require(ReplicatedStorage.Packages.Signal)
+local Packages = script.Parent.Parent
+local Networker = require(Packages.Networker)
+local Sift = require(Packages.Sift)
+local Signal = require(Packages.Signal)
 
 local localPlayer = Players.LocalPlayer
 
