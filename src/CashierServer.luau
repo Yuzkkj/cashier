@@ -1,104 +1,42 @@
 local DataStoreService = game:GetService("DataStoreService")
 local MarketplaceService = game:GetService("MarketplaceService")
-local MessagingService = game:GetService("MessagingService")
 local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+local ServerScriptService = game:GetService("ServerScriptService")
 
-if RunService:IsClient() then
+if not RunService:IsServer() then
 	return {} :: CashierServer
 end
 
---[=[
-    @type ItemType "DevProduct" | "Gamepass" | "Semipass"
-    @within CashierServer
+local ProfileStore = require(ServerScriptService.ServerPackages.ProfileStore)
+local Networker = require(ReplicatedStorage.Packages.Networker)
+local Sift = require(ReplicatedStorage.Packages.Sift)
+local Signal = require(ReplicatedStorage.Packages.Signal)
 
-    Determines the type of an item.
+local PROFILE_STORE_INDEX = "Cashier"
+local TEMPLATE = {
+	items = {} :: { [string]: true },
+	unsent = {} :: { [string]: number },
+}
+
+local purchaseHistoryStore = DataStoreService:GetDataStore("PurchaseHistory")
+
+--[=[
+	@type ItemType "DevProduct" | "Gamepass" | "Semipass"
+	@within CashierServer
+
+	Determines the type of an item.
 ]=]
 type ItemType = "DevProduct" | "Gamepass" | "Semipass"
 
 --[=[
-	@interface ItemData
+	@interface Item
 	@within CashierServer
-	.name string -- The name of the item
-	.type ItemType -- The type of the item
-	.id number -- The id of the gamepass or developer product linked with the item
-	.giftId number? -- The id of the developer product for gifting this item
-	.callback ((Player, ...any?) -> boolean)? -- A callback to be called when delivering the item to a player
-	.predicate ((player: Player, ...any) -> boolean)? -- A function to check if the user can purchase the item with the given params
-
-	Configuration data for an item registered with Cashier.
-
-	```lua
-	local items = {
-		{
-			name = "VIP",
-			type = "Gamepass",
-			id = 1234,
-			giftId = 4321,
-			callback = function(player: Player)
-				DataService:arrayInsert(player, "titles", "VIP")
-
-				-- grants any extra benefits here
-
-				return true
-			end
-		},
-		{
-			name = "Starter Pack",
-			type = "Semipass",
-			id = 7890,
-			giftId = 987,
-			callback = function(player: Player)
-				DataService:update(player, "cash", function(value)
-					return value + 5000
-				end)
-
-				return true
-			end
-		},
-		{
-			name = "Upgrade Unit",
-			type "DevProduct",
-			id = 6969,
-			predicate = function(player: Player, unitId: string)
-				-- make any validation here, for example
-				-- if unitId is not nill
-				-- if it is a valid unitId
-				-- if it's not at max level, etc.
-
-				return true
-			end,
-			callback = function(player: Player, unitId: string)
-				-- the unitId will be the same one given to the predicate
-
-				return true
-			end
-		},
-	}
-	```
-
-	:::warning
-	If the `type` of the item is set to `"Gamepass"`, the `id` should also be a id of a gamepass.
-	:::
-]=]
-type ItemData = {
-	name: string,
-	type: ItemType,
-	id: number,
-	giftId: number?,
-	callback: ((player: Player, ...any?) -> boolean)?,
-	predicate: ((player: Player, ...any) -> boolean)?,
-}
-
---[=[
-    @interface Item
-    @within CashierServer
-    .name string
-    .type ItemType
-    .id number -- The id of the gamepass of developer product linked with the item
-    .giftId number? -- The id of the developer product for gifting this item
-
-    Useful information of an item.
+	.name string -- The unique name of the item
+	.type ItemType -- The type of the item ("DevProduct", "Gamepass", or "Semipass")
+	.id number -- The Roblox GamePass ID or Developer Product ID
+	.giftId number? -- The Developer Product ID used for gifting this item
 ]=]
 type Item = {
 	name: string,
@@ -108,12 +46,71 @@ type Item = {
 }
 
 --[=[
-    @interface GiftData
-    @within CashierServer
-    .item string -- The name of the item
-    .from number -- The id of the user that has gifted the item
+	@interface ItemData
+	@within CashierServer
+	.name string -- The unique name of the item
+	.type ItemType -- The type of the item ("DevProduct", "Gamepass", or "Semipass")
+	.id number -- The Roblox GamePass ID or Developer Product ID
+	.giftId number? -- The Developer Product ID used for gifting this item
+	.callback (Player, ...any?) -> boolean -- Callback executed on the server when granting the item to a player
+	.predicate ((Player, ...any?) -> boolean)? -- Optional validator function to check if a player is eligible to purchase the item
 
-    Data from a gift.
+	Configuration data for an item registered with Cashier.
+
+	```lua
+	local items = {
+		{
+			name = "VIP",
+			type = "Gamepass",
+			id = 123456,
+			giftId = 654321,
+			callback = function(player: Player)
+				DataService:arrayInsert(player, "titles", "VIP")
+				return true
+			end,
+		},
+		{
+			name = "Starter Pack",
+			type = "Semipass",
+			id = 789012,
+			giftId = 210987,
+			callback = function(player: Player)
+				DataService:update(player, "cash", function(value)
+					return value + 5000
+				end)
+				return true
+			end,
+		},
+		{
+			name = "Upgrade Unit",
+			type = "DevProduct",
+			id = 345678,
+			predicate = function(player: Player, unitId: string)
+				-- Validate that the unit exists and can be upgraded
+				return unitId ~= nil and UnitService:canUpgrade(player, unitId)
+			end,
+			callback = function(player: Player, unitId: string)
+				UnitService:upgrade(player, unitId)
+				return true
+			end,
+		},
+	}
+	```
+	
+	:::warning
+	If `type` is `"Gamepass"`, `id` must be a valid Roblox GamePass ID. If `type` is `"DevProduct"` or `"Semipass"`, `id` must be a Developer Product ID.
+	:::
+]=]
+type ItemData = Item & {
+	callback: (Player, ...any?) -> boolean,
+	predicate: ((Player, ...any?) -> boolean)?,
+}
+
+--[=[
+	@interface GiftData
+	@within CashierServer
+	.item string -- The name of the gifted item
+	.from number -- The UserId of the player who sent the gift
 ]=]
 type GiftData = {
 	item: string,
@@ -123,12 +120,10 @@ type GiftData = {
 --[=[
 	@interface PurchaseData
 	@within CashierServer
-	.player Player -- The player who bought the item
-	.item string -- The name of the item
-	.robuxSpent number -- The amout of robux spent on the purchase
-	.recipientId number? -- The id of the recipient if the purchase was an gift
-
-	Data from a purchase.
+	.player Player -- The player who made the purchase
+	.item string -- The name of the purchased item
+	.robuxSpent number -- The amount of Robux spent on the purchase
+	.recipientId number? -- The recipient UserId if the purchase was a gift
 ]=]
 type PurchaseData = {
 	player: Player,
@@ -137,142 +132,95 @@ type PurchaseData = {
 	recipientId: number?,
 }
 
-local DataService = require(script.Parent.Parent.DataService).server
-local Networker = require(script.Parent.Parent.Networker)
-local ServicePlayerData = require(script.Parent.Parent.ServicePlayerData)
-local Sift = require(script.Parent.Parent.Sift)
-local Signal = require(script.Parent.Parent.Signal)
+--[=[
+	@interface InitOptions
+	@within CashierServer
+	.itemsData { ItemData } -- An array of all item configurations to register
 
-local PLAYER_DATA_TEMPLATE = {
-	gifting = nil,
+	Options for initializing the server-side of Cashier.
+]=]
+type InitOptions = {
+	itemsData: { ItemData },
 }
 
-local purchaseHistoryStore = DataStoreService:GetDataStore("PurchaseHistory")
-
 --[=[
-    @class CashierServer
-
-    The server-side of Cashier. Handles item registration, purchase processing, gamepass tracking,
-    gifting and inventory management.
+	@class CashierServer
+	@server
+	
+	The server-side singleton for Cashier. Handles item registration, purchase validation, receipt processing, and cross-server gifting.
 ]=]
-local CashierServer = {}
+local CashierServer = {
+	_giftingCache = {} :: { [Player]: number },
+	_items = {} :: { Item },
+	_itemsCallback = {} :: { [string]: (Player, ...any?) -> boolean },
+	_itemsPredicate = {} :: { [string]: (Player, ...any?) -> boolean },
+	_pendingParams = {} :: { [Player]: { [string]: { any } } },
+	_profiles = {} :: { [Player]: ProfileStore.Profile<typeof(TEMPLATE)> },
+	--[=[
+		@prop purchaseCompleted Signal<PurchaseData>
+		@within CashierServer
+
+		A signal that fires when a player completes a purchase, providing the `PurchaseData`.
+	]=]
+	purchaseCompleted = Signal.new() :: Signal.Signal<PurchaseData>,
+}
 
 --[=[
 	@method init
 	@within CashierServer
-	@param options InitOptions
-
-	Initializes the server-side of Cashier.
+	@param options InitOptions -- Options containing item configurations
+	
+	Initializes CashierServer, sets up ProfileStore session handling, registers network endpoints, and connects MarketplaceService purchase events.
 
 	```lua
-	local DataService = require(path.to.DataService).server
 	local Cashier = require(path.to.Cashier).server
-
 	local items = require(path.to.items)
 
-	Cashier:init(items)
+	Cashier:init({
+		itemsData = items,
+	})
 	```
-
-	:::warning
-	`:init(...)` should be called before using any other method.
-	:::
 ]=]
-function CashierServer.init(self: CashierServer, itemsData: { ItemData }): ()
-	self._items = Sift.Array.map(itemsData, function(itemData)
+function CashierServer.init(self: CashierServer, options: InitOptions): ()
+	assert(RunService:IsServer(), "Cashier's server-side can only be used by the server.")
+	assert(self._networker == nil, "Cashier's server-side has already been initialized.")
+
+	self._items = Sift.Array.map(options.itemsData, function(itemData)
 		return Sift.Dictionary.removeKeys(itemData, "callback", "predicate")
 	end)
 
-	self._itemsCallback = {}
-	self._itemsPredicate = {}
-	for _, itemData in itemsData do
+	for _, itemData in options.itemsData do
 		self._itemsCallback[itemData.name] = itemData.callback
 		self._itemsPredicate[itemData.name] = itemData.predicate
 	end
 
 	self._networker = Networker.server.new("Cashier", self, {
-		self.getAllItems,
-		self.purchaseItem,
-		self.gift,
+		self._purchase,
+		self._gift,
+		self.getUnsentItems,
 	})
-	self._playerData = ServicePlayerData.new(PLAYER_DATA_TEMPLATE)
-	self._pendingParams = {}
-
-	--[=[
-		@external Signal<T...> https://sleitnick.github.io/RbxUtil/api/Signal/
-		@prop purchaseCompleted Signal<PurchaseData>
-		@within CashierServer
-
-		A signal that fires when a player buys an item, providing the `PurchaseData`.
-	]=]
-	self.purchaseCompleted = Signal.new()
-
-	local function onPlayerAdded(player: Player): ()
-		DataService:waitForData(player)
-		local gifts = DataService:get(player, "_gifts") :: { GiftData }?
-		if gifts and #gifts > 0 then
-			for _, giftData in gifts do
-				self:giveItem(player, giftData.item)
-				self._networker:fire(player, "onGiftReceived", giftData)
-			end
-
-			DataService:set(player, "_gifts", nil)
-		end
-
-		for _, item in self._items do
-			if item.type ~= "Gamepass" then
-				continue
-			end
-
-			local success, ownsGamepass = pcall(function()
-				return MarketplaceService:UserOwnsGamePassAsync(player.UserId, item.id)
-			end)
-
-			if success and ownsGamepass and not self:hasItem(player, item.name) then
-				self:giveItem(player, item.name)
-			end
-		end
-	end
+	self._playerStore = ProfileStore.New(PROFILE_STORE_INDEX, TEMPLATE)
 
 	for _, player in Players:GetPlayers() do
-		onPlayerAdded(player)
+		task.spawn(self._playerAdded, self, player)
 	end
 
-	Players.PlayerAdded:Connect(onPlayerAdded)
-	Players.PlayerRemoving:Connect(function(player)
-		self._pendingParams[player] = nil
+	Players.PlayerAdded:Connect(function(player)
+		self:_playerAdded(player)
 	end)
 
-	MessagingService:SubscribeAsync("_gift", function(message)
-		local player = Players:GetPlayerByUserId(message.Data.userId)
-		if not player then
-			return
-		end
-
-		local giftData = message.Data.giftData
-
-		self:giveItem(player, giftData.item)
-		self._networker:fire(player, "onGiftReceived", giftData)
-
-		DataService:update(player, "_gifts", function(gifts)
-			if not gifts then
-				return nil
-			end
-
-			local index = Sift.Array.findWhere(gifts, function(data)
-				return Sift.Dictionary.equals(giftData, data)
-			end)
-
-			if not index then
-				return gifts
-			end
-
-			local newGifts = Sift.Array.removeIndex(gifts, index)
-			return if #newGifts == 0 then nil else newGifts
-		end)
+	Players.PlayerRemoving:Connect(function(player)
+		self:_playerRemoving(player)
 	end)
 
 	MarketplaceService.PromptGamePassPurchaseFinished:Connect(function(player, gamepassId, wasPurchased)
-		if not wasPurchased or not MarketplaceService:UserOwnsGamePassAsync(player.UserId, gamepassId) then
+		if not wasPurchased then
+			return
+		end
+
+		local success, ownsGamepass =
+			pcall(MarketplaceService.UserOwnsGamePassAsync, MarketplaceService, player.UserId, gamepassId)
+		if not success or not ownsGamepass then
 			return
 		end
 
@@ -281,7 +229,11 @@ function CashierServer.init(self: CashierServer, itemsData: { ItemData }): ()
 			return
 		end
 
-		self:giveItem(player, item.name)
+		local didGranted = self:give(player, item.name)
+		if not didGranted then
+			return
+		end
+
 		self._networker:fire(player, "_purchaseCompleted", item.name, false)
 		self.purchaseCompleted:Fire({
 			player = player,
@@ -316,7 +268,7 @@ function CashierServer.init(self: CashierServer, itemsData: { ItemData }): ()
 
 					return true
 				else
-					local didHandlerGrantPurchase = self:giveItem(player, item.name)
+					local didHandlerGrantPurchase = self:give(player, item.name)
 					if not didHandlerGrantPurchase then
 						return nil
 					end
@@ -344,52 +296,101 @@ function CashierServer.init(self: CashierServer, itemsData: { ItemData }): ()
 	end
 end
 
+function CashierServer._playerAdded(self: CashierServer, player: Player): ()
+	local profile = self._playerStore:StartSessionAsync(tostring(player.UserId))
+
+	if not profile then
+		player:Kick("Profile load fail - Please rejoin")
+		return
+	end
+
+	profile:AddUserId(player.UserId)
+	profile:Reconcile()
+	profile.OnSessionEnd:Connect(function()
+		self._profiles[player] = nil
+		player:Kick("Profile session end - Please rejoin")
+	end)
+
+	if not player:IsDescendantOf(Players) then
+		profile:EndSession()
+		return
+	end
+
+	self._profiles[player] = profile
+
+	for _, item in self._items do
+		if item.type ~= "Gamepass" then
+			continue
+		end
+
+		local success, ownsGamepass = pcall(function()
+			return MarketplaceService:UserOwnsGamePassAsync(player.UserId, item.id)
+		end)
+
+		if success and ownsGamepass and not self:has(player, item.name) then
+			self:give(player, item.name)
+		end
+	end
+
+	self._networker:set(player, "_items", self._items)
+	self._networker:set(player, "_owned", profile.Data.items)
+
+	profile:MessageHandler(function(giftData, processed: () -> ())
+		self:give(player, giftData.item)
+		self._networker:fire(player, "onGiftReceived", giftData)
+
+		processed()
+	end)
+end
+
+function CashierServer._playerRemoving(self: CashierServer, player: Player): ()
+	local profile = self._profiles[player]
+	if not profile then
+		return
+	end
+
+	profile:EndSession()
+	self._profiles[player] = nil
+	self._pendingParams[player] = nil
+	self._giftingCache[player] = nil
+end
+
 function CashierServer._processGift(self: CashierServer, player: Player, receiptInfo): ()
 	local item = self:getItemById(receiptInfo.ProductId)
 	if not item then
 		return
 	end
 
-	local playerData = self._playerData:get(player)
-	local recipientId = playerData.gifting
-	playerData.gifting = nil
+	local recipientId = self._giftingCache[player]
+	self._giftingCache[player] = nil
 
 	local success = false
-	if recipientId then
-		local recipientProfile = DataService:asyncGetProfile(recipientId)
-		if recipientProfile then
-			local recipientItems = recipientProfile.Data["_items"]
-			local hasItem = recipientItems and Sift.Set.has(recipientItems, item.name)
-			if not hasItem then
-				local recipient = Players:GetPlayerByUserId(recipientId)
-				if recipient then
-					local didGrantRecipient = self:giveItem(recipient, item.name)
-					if not didGrantRecipient then
-						self:addItemToInventory(player, item.name)
-						return
-					end
+	local recipient = Players:GetPlayerByUserId(recipientId)
+	if recipient then
+		local didGrantRecipient = self:give(recipient, item.name)
+		if not didGrantRecipient then
+			self._networker:fire(player, "_giftingFailed", item.name, recipientId)
+		else
+			self._networker:fire(recipient, "onGiftReceived", {
+				item = item.name,
+				from = player.UserId,
+			})
 
-					self._networker:fire(recipient, "onGiftReceived", {
-						item = item.name,
-						from = player.UserId,
-					})
-				else
-					local didAdded = self:addGift(recipientId, {
-						item = item.name,
-						from = player.UserId,
-					})
-
-					if not didAdded then
-						self:addItemToInventory(player, item.name)
-					end
-				end
-				success = true
-			end
+			success = true
 		end
+	else
+		success = self._playerStore:MessageAsync(
+			tostring(recipientId),
+			{
+				item = item.name,
+				from = player.UserId,
+			} :: GiftData
+		)
 	end
 
 	if not success then
-		self:addItemToInventory(player, item.name)
+		self:_addItemToUnsent(player, item.name)
+		self._networker:fire(player, "_giftingFailed", item.name, recipientId)
 		self._networker:fire(player, "_purchaseCompleted", item.name, false)
 		self.purchaseCompleted:Fire({
 			player = player,
@@ -407,351 +408,26 @@ function CashierServer._processGift(self: CashierServer, player: Player, receipt
 	end
 end
 
---[=[
-	@method getAllItems
-	@within CashierServer
-	@return { Item }
-
-	Returns the `Item` of all items.
-
-	```lua
-	local Cashier = require(path.to.Cashier).server
-
-	for _, item in Cashier:getAllItems() do
-		print(item)
+function CashierServer._addItemToUnsent(self: CashierServer, player: Player, itemName: string): ()
+	local profile = self._profiles[player]
+	if not profile then
+		return
 	end
-	```
-]=]
-function CashierServer.getAllItems(self: CashierServer): { Item }
-	return self._items
-end
 
---[=[
-    @method getItemById
-    @within CashierServer
-    @param itemId number
-    @return Item?
-
-    Retrieves the info of an item with the given id.
-    `itemId` can be either a normal id or a giftId.
-
-    ```lua
-    local Cashier = require(path.to.Cashier).server
-
-    local item = Cashier:getItemById(1234)
-    for k, v in item do
-        print(k, v)
-    end
-    ```
-]=]
-function CashierServer.getItemById(self: CashierServer, itemId: number): Item?
-	local index = Sift.Array.findWhere(self._items, function(item: Item)
-		return item.id == itemId or item.giftId == itemId
-	end)
-
-	return self._items[index]
-end
-
---[=[
-    @method getItemByName
-    @within CashierServer
-    @param itemName string
-    @return Item?
-
-    Retrieves the info of an item with the given name.
-
-    ```lua
-    local Cashier = require(path.to.Cashier).server
-
-    local item = Cashier:getItemByName("VIP")
-    for k, v in item do
-        print(k, v)
-    end
-    ```
-]=]
-function CashierServer.getItemByName(self: CashierServer, itemName: string): Item?
-	local index = Sift.Array.findWhere(self._items, function(item: Item)
-		return item.name == itemName
-	end)
-
-	return self._items[index]
-end
-
---[=[
-	@method getItemsOfType
-	@within CashierServer
-	@param itemType ItemType
-
-	Returns an array with all items of the given type.
-
-	```lua
-	local Cashier = require(path.to.Cashier).server
-	
-	for _, item in Cashier:getItemsOfType("Gamepass") do
-		print(item)
-	end
-	```
-]=]
-function CashierServer.getItemsOfType(self: CashierServer, itemType: ItemType): { Item }
-	return Sift.Array.filter(self._items, function(itemData: ItemData)
-		return itemData.type == itemType
+	profile.Data.unsent = Sift.Dictionary.update(profile.Data.unsent, itemName, function(amount)
+		return amount + 1
+	end, function()
+		return 1
 	end)
 end
 
---[=[
-	@method isGiftId
-	@within CashierServer
-	@param id number
-	@return boolean
-
-	Checks if an id is the `giftId` of an item.
-
-	```lua
-	local Cashier = require(path.to.Cashier).server
-
-	local isGiftId = Cashier:isGiftId(4321)
-	print(isGiftId)
-	```
-]=]
-function CashierServer.isGiftId(self: CashierServer, id: number): boolean
-	local item = self:getItemById(id)
-	if not item then
-		return false
-	end
-
-	return item.giftId == id
-end
-
---[=[
-	@method getItemPrice
-	@within CashierServer
-	@param itemName string
-	@return number
-
-	Returns the price in robux of an item.
-]=]
-function CashierServer.getItemPrice(self: CashierServer, itemName: string): number
+function CashierServer._purchase(self: CashierServer, player: Player, itemName: string, ...: any?): ()
 	local item = self:getItemByName(itemName)
 	if not item then
 		return
 	end
 
-	local success, productInfo = pcall(function()
-		return MarketplaceService:GetProductInfoAsync(
-			item.id,
-			if item.type == "Gamepass" then Enum.InfoType.GamePass else Enum.InfoType.Product
-		)
-	end)
-
-	return if success and productInfo then productInfo.PriceInRobux else 0
-end
-
---[=[
-    @method hasItem
-    @within CashierServer
-    @param player Player
-    @param itemName string
-    @return boolean
-
-    Checks if the user has the item with the given name.
-
-    ```lua
-    local Players = game:GetService("Players")
-    local Cashier = require(path.to.Cashier).server
-
-    local player = Players:GetPlayers()[1]
-    if player then
-        local hasItem = Cashier:hasItem(player, "VIP")
-        print(hasItem)
-    end
-    ```
-]=]
-function CashierServer.hasItem(self: CashierServer, player: Player, itemName: string): boolean
-	if not self:getItemByName(itemName) then
-		warn(`No item with name "{itemName}"`)
-		return false
-	end
-
-	local playerItems = DataService:get(player, "_items")
-	if not playerItems then
-		return false
-	end
-
-	return Sift.Set.has(playerItems, itemName)
-end
-
---[=[
-    @method giveItem
-    @within CashierServer
-    @param player Player
-    @param itemName string
-    @return boolean
-
-    Gives the item to the player and calls the `callback` of the `ItemData`, if it exists.
-
-    ```lua
-    local Players = game:GetService("Players")
-
-    local Cashier = require(path.to.Cashier).server
-
-    Cashier:giveItem(Players.IYuzkkj, "VIP")
-    ```
-]=]
-function CashierServer.giveItem(self: CashierServer, player: Player, itemName: string): boolean
-	local item = self:getItemByName(itemName)
-	if not item then
-		return false
-	end
-
-	if self:hasItem(player, itemName) then
-		return true
-	end
-
-	if item.type ~= "DevProduct" then
-		DataService:update(player, "_items", function(playerItems)
-			playerItems = playerItems or {}
-
-			return Sift.Set.add(playerItems, itemName)
-		end)
-	end
-
-	local callback = self._itemsCallback[itemName]
-	if not callback then
-		return true
-	end
-
-	local params = self._pendingParams[player] and self._pendingParams[player][itemName]
-	if params then
-		self._pendingParams[player][itemName] = nil
-
-		return callback(player, table.unpack(params))
-	else
-		return callback(player)
-	end
-end
-
---[=[
-    @method addItemToInventory
-    @within CashierServer
-    @param player Player
-    @param itemName string
-    @param amount number?
-
-    Adds the item to the player inventory.
-
-    ```lua
-    local Players = game:GetService("Players")
-
-    local Cashier = require(path.to.Cashier).server
-
-    Cashier:addItemToInventory(Players.IYuzkkj, "VIP")
-    ```
-
-    :::note
-    Further gift attempts of the same item will be sent without charging the user.
-    :::
-]=]
-function CashierServer.addItemToInventory(self: CashierServer, player: Player, itemName: string, amount: number?): ()
-	local item = self:getItemByName(itemName)
-	if not item then
-		return
-	end
-
-	DataService:update(player, "_inventory", function(inventory)
-		inventory = inventory or {}
-
-		return Sift.Dictionary.update(inventory, itemName, function(value)
-			return if amount then value + amount else value + 1
-		end, function()
-			return 1
-		end)
-	end)
-end
-
---[=[
-	@method addGift
-	@within CashierServer
-	@param userId number
-	@param giftData GiftData
-	@return boolean -- Tells if the gift was successfully added
-
-	Adds the item to the player's pending gifts.
-	The player will receive the item if it is online in another server, or the next time they join the game.
-
-	```lua
-	local Cashier = require(path.to.Cashier).server
-
-	Cashier:addGift(6969, {
-		item = "VIP",
-		from = 9696
-	})
-	```
-]=]
-function CashierServer.addGift(self: CashierServer, userId: number, giftData: GiftData): boolean
-	local item = self:getItemByName(giftData.item)
-	if not item then
-		return false
-	end
-
-	local recipientProfile = DataService:asyncGetProfile(userId)
-	if not recipientProfile then
-		return false
-	end
-
-	local recipientItems = recipientProfile.Data["_items"]
-	local hasItem = recipientItems and Sift.Set.has(recipientItems, item.name)
-	if hasItem then
-		return false
-	end
-
-	local recipientGifts = recipientProfile.Data["_gifts"] or {}
-	table.insert(recipientGifts, giftData)
-	recipientProfile.Data["_gifts"] = recipientGifts
-
-	if recipientProfile:IsActive() then
-		recipientProfile:Save()
-	else
-		recipientProfile:SetAsync()
-	end
-
-	local s, err = pcall(function()
-		MessagingService:PublishAsync("_gift", {
-			userId = userId,
-			giftData = giftData,
-		})
-	end)
-
-	if not s then
-		warn(err)
-	end
-
-	return true
-end
-
---[=[
-	@method purchaseItem
-	@within CashierServer
-	@param player Player
-	@param itemName string
-	@param ... any -- Extra params
-
-	Prompts the user to purchase the item with the given name.
-
-	```lua
-	local Cashier = require(path.to.Cashier).client
-
-	if not hasVIP then
-		Cashier:purchaseItem(player, "VIP")
-	end
-	```
-]=]
-function CashierServer.purchaseItem(self: CashierServer, player: Player, itemName: string, ...: any): ()
-	local item = self:getItemByName(itemName)
-	if not item then
-		return
-	end
-
-	if self:hasItem(player, itemName) then
+	if self:has(player, itemName) then
 		return
 	end
 
@@ -778,100 +454,328 @@ function CashierServer.purchaseItem(self: CashierServer, player: Player, itemNam
 		MarketplaceService:PromptProductPurchase(player, item.id)
 	end
 
-	self._networker:fire(player, "_purchaseStarted")
+	self._networker:set(player, "_purchasing", true)
 end
 
---[=[
-    @method gift
-    @within CashierServer
-    @param player Player
-    @param userId number
-    @param itemName string
-    @return boolean -- Tells if the gift was successfully initiated
-    @return string? -- An error message in case the user could not gift the other one
-
-    Prompts the user to purchase the item for the other player.
-]=]
-function CashierServer.gift(
+function CashierServer._gift(
 	self: CashierServer,
 	player: Player,
-	userId: number,
+	recipientId: number,
 	itemName: string
-): (boolean, string?, boolean?)
-	if userId == player.UserId then
-		return false, "You cannot gift yourself", false
+): (boolean, string?)
+	if recipientId == player.UserId then
+		return false, "You cannot gift yourself"
 	end
 
 	local item = self:getItemByName(itemName)
 	if not item then
-		return false, `No item found with name "{itemName}"`, false
+		return false, `No item found with name "{itemName}"`
 	end
 
 	if not item.giftId then
-		return false, `You cannot gift this item`, false
+		return false, `You cannot gift this item`
 	end
 
-	local recipientProfile = DataService:asyncGetProfile(userId)
-	if not recipientProfile then
-		return false, `You can not gift someone who hasn't played the game before`, false
+	local recipientProfile = self._playerStore:GetAsync(tostring(recipientId))
+	if recipientProfile then
+		local isOwned = Sift.Set.has(recipientProfile.Data.items, itemName)
+		local hasPendingGift = recipientProfile.global_updates ~= nil
+			and Sift.Array.findWhere(recipientProfile.global_updates, function(update)
+					local giftData = update[2] :: GiftData?
+					return giftData ~= nil and giftData.item == itemName
+				end)
+				~= nil
+
+		if item.type ~= "DevProduct" and (isOwned or hasPendingGift) then
+			return false, "User already owns this item"
+		end
 	end
 
-	local recipientItems = recipientProfile.Data["_items"]
-	local hasItem = item.type ~= "DevProduct"
-		and (
-			recipientItems and Sift.Set.has(recipientItems, itemName)
-			or recipientProfile
-				and recipientProfile.Data["_gifts"]
-				and Sift.Array.findWhere(recipientProfile.Data["_gifts"], function(giftData)
-					return giftData.item == itemName
-				end) ~= nil
-		)
-	if hasItem then
-		return false, `User already owns this item`, false
+	local profile = self._profiles[player]
+	if not profile then
+		player:Kick("Something went wrong - Please rejoin")
+		return
 	end
 
-	self._playerData:get(player).gifting = userId
+	self._giftingCache[player] = recipientId
 
-	local playerInventory = DataService:get(player, "_inventory")
-	if playerInventory and playerInventory[itemName] then
-		DataService:update(player, "_inventory", function(inventory)
-			inventory = Sift.Dictionary.update(inventory, itemName, function(value)
-				return if value - 1 > 0 then value - 1 else nil
-			end)
-
-			if Sift.Dictionary.count(inventory) == 0 then
-				return nil
-			else
-				return inventory
-			end
+	if profile.Data.unsent[itemName] then
+		profile.Data.unsent = Sift.Dictionary.update(profile.Data.unsent, itemName, function(amount)
+			return if amount - 1 > 0 then amount - 1 else nil
 		end)
 
-		task.spawn(
-			self._processGift,
-			self,
-			player,
-			{ ProductId = item.id, CurrencySpent = self:getItemPrice(itemName) }
-		)
+		task.spawn(self._processGift, self, player, {
+			ProductId = item.id,
+			CurrencySpent = self:getItemPrice(itemName),
+		})
 
 		return true
 	end
 
 	MarketplaceService:PromptProductPurchase(player, item.giftId)
-	self._networker:fire(player, "_purchaseStarted")
+	self._networker:set(player, "_purchasing", true)
 
 	return true
 end
 
-type CashierServer = typeof(CashierServer) & {
-	_items: { Item },
-	_itemsCallback: { [string]: (player: Player, ...any?) -> boolean },
-	_itemsPredicate: { [string]: (player: Player, ...any) -> boolean },
+--[=[
+	@method getUnsentItems
+	@within CashierServer
+	@param player Player -- The player to get the unsent items of
+	@return { [string]: number } -- A dictionary mapping item names to unsent gift counts
+	
+	Returns all unsent gifts stored in the player's profile that failed to deliver.
+
+	```lua
+	local Cashier = require(path.to.Cashier).server
+
+	local unsentItems = Cashier:getUnsentItems(player)
+
+	for itemName, amount in unsentItems do
+		print(`{player.Name} has {amount} unsent {itemName}(s).`)
+	end
+	```
+]=]
+function CashierServer.getUnsentItems(self: CashierServer, player: Player): { [string]: number }
+	local profile = self._profiles[player]
+	if not profile then
+		return {}
+	end
+
+	return profile.Data.unsent
+end
+
+--[=[
+	@method getAllItems
+	@within CashierServer
+	@return { Item } -- An array containing all registered items
+
+	Returns an array of all registered items.
+
+	```lua
+	local Cashier = require(path.to.Cashier).server
+
+	local items = Cashier:getAllItems()
+
+	for _, item in items do
+		print(item.name, item.type)
+	end
+	```
+]=]
+function CashierServer.getAllItems(self: CashierServer): { Item }
+	return self._items
+end
+
+--[=[
+	@method getItemsOfType
+	@within CashierServer
+	@param itemType ItemType -- The type of items to retrieve ("DevProduct" | "Gamepass" | "Semipass")
+	@return { Item } -- An array containing items of the specified type
+
+	Retrieves all registered items of a specific type.
+
+	```lua
+	local Cashier = require(path.to.Cashier).server
+
+	local gamepasses = Cashier:getItemsOfType("Gamepass")
+
+	for _, item in gamepasses do
+		print(item.name)
+	end
+	```
+]=]
+function CashierServer.getItemsOfType(self: CashierServer, itemType: ItemType): { Item }
+	return Sift.Array.filter(self._items, function(item: Item)
+		return item.type == itemType
+	end)
+end
+
+--[=[ 
+	@method getItemByName
+	@within CashierServer
+	@param itemName string -- The name of the item to retrieve
+	@return Item? -- The item with the specified name, or nil if not found
+
+	Retrieves a registered item by its name.
+
+	```lua
+	local Cashier = require(path.to.Cashier).server
+
+	local item = Cashier:getItemByName("VIP")
+
+	if item then
+		print("Found item with ID:", item.id)
+	end
+	```
+]=]
+function CashierServer.getItemByName(self: CashierServer, itemName: string): Item?
+	local index = Sift.Array.findWhere(self._items, function(item: Item)
+		return item.name == itemName
+	end)
+
+	return index and self._items[index]
+end
+
+--[=[ 
+	@method getItemById
+	@within CashierServer
+	@param itemId number -- The ID of the item to retrieve
+	@return Item? -- The item with the specified ID, or nil if not found
+
+	Retrieves a registered item by its ID.
+
+	```lua
+	local Cashier = require(path.to.Cashier).server
+
+	local item = Cashier:getItemById(123456)
+
+	if item then
+		print("Found item:", item.name)
+	end
+	```
+
+	:::info
+	`itemId` can be a standard product/gamepass ID or a gift Developer Product ID.
+	:::
+]=]
+function CashierServer.getItemById(self: CashierServer, itemId: number): Item?
+	local index = Sift.Array.findWhere(self._items, function(item: Item)
+		return item.id == itemId or item.giftId == itemId
+	end)
+
+	return index and self._items[index]
+end
+
+--[=[ 
+	@method getItemPrice
+	@within CashierServer
+	@yields
+	@param itemName string -- The name of the item to get the price of
+	@return number -- The price of the item in Robux, or 0 if unavailable
+
+	Retrieves the price of an item in Robux from MarketplaceService.
+
+	```lua
+	local Cashier = require(path.to.Cashier).server
+
+	local price = Cashier:getItemPrice("VIP")
+
+	print(`VIP costs {price} Robux`)
+	```
+]=]
+function CashierServer.getItemPrice(self: CashierServer, itemName: string): number
+	local item = self:getItemByName(itemName)
+	if not item then
+		return 0
+	end
+
+	local success, productInfo = pcall(function()
+		return MarketplaceService:GetProductInfoAsync(
+			item.id,
+			if item.type == "Gamepass" then Enum.InfoType.GamePass else Enum.InfoType.Product
+		)
+	end)
+
+	return if success and productInfo and productInfo.PriceInRobux then productInfo.PriceInRobux else 0
+end
+
+--[=[ 
+	@method isGiftId
+	@within CashierServer
+	@param itemId number -- The ID of the item to check
+	@return boolean -- True if the item is a gift ID, false otherwise
+
+	Checks if an item ID is a registered gift Developer Product ID.
+
+	```lua
+	local Cashier = require(path.to.Cashier).server
+
+	local id = 123456
+
+	print(Cashier:isGiftId(id))
+	```
+]=]
+function CashierServer.isGiftId(self: CashierServer, itemId: number): boolean
+	return Sift.Array.findWhere(self._items, function(item: Item)
+		return item.giftId == itemId
+	end) ~= nil
+end
+
+--[=[
+	@method has
+	@within CashierServer
+	@param player Player -- The player to check
+	@param itemName string -- The name of the item
+	@return boolean -- True if the player owns the item, false otherwise
+
+	Checks if a player owns the specified item.
+	
+	```lua
+	local Cashier = require(path.to.Cashier).server
+
+	if not Cashier:has(player, "VIP") then
+		print("You need VIP access to enter this zone")
+	end
+	```
+]=]
+function CashierServer.has(self: CashierServer, player: Player, itemName: string): boolean
+	local profile = self._profiles[player]
+	if not profile then
+		return false
+	end
+
+	return Sift.Set.has(profile.Data.items, itemName)
+end
+
+--[=[
+	@method give
+	@within CashierServer
+	@param player Player -- The player to grant the item to
+	@param itemName string -- The name of the item
+	@return boolean -- True if the item was successfully given, false otherwise
+
+	Gives an item to a player, updates their profile data and client ownership state, and executes the item's registered callback.
+	
+	```lua
+	local Cashier = require(path.to.Cashier).server
+
+	Cashier:give(player, "VIP")
+	```
+]=]
+function CashierServer.give(self: CashierServer, player: Player, itemName: string): boolean
+	local item = self:getItemByName(itemName)
+	if not item then
+		return false
+	end
+
+	if self:has(player, itemName) then
+		return false
+	end
+
+	local profile = self._profiles[player]
+	if not profile then
+		return false
+	end
+
+	if item.type ~= "DevProduct" then
+		profile.Data.items = Sift.Set.add(profile.Data.items, itemName)
+		self._networker:set(player, "_owned", profile.Data.items)
+	end
+
+	local callback = self._itemsCallback[itemName]
+	local params = self._pendingParams[player] and self._pendingParams[player][itemName]
+	if params then
+		self._pendingParams[player][itemName] = nil
+
+		return callback(player, table.unpack(params))
+	else
+		return callback(player)
+	end
+end
+
+export type CashierServer = typeof(CashierServer) & {
 	_networker: Networker.Server,
-	_pendingParams: { [Player]: { [string]: { any } } },
-	_playerData: ServicePlayerData.ServicePlayerData<{
-		gifting: number?,
-	}>,
-	purchaseCompleted: Signal.Signal<PurchaseData>,
+	_playerStore: ProfileStore.ProfileStore<typeof(TEMPLATE)>,
 }
 
 return CashierServer :: CashierServer

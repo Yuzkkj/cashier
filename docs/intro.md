@@ -4,205 +4,129 @@ sidebar_position: 1
 
 # Getting Started
 
-:::info
-Cashier is designed to work alongside [DataService](https://leifstout.github.io/dataService) by Leif Stout for persistent player data. Make sure DataService is set up in your project before using Cashier.
-:::
+Cashier is a clean, robust, and modern Roblox monetization library designed to streamline Gamepasses, Developer Products, Semipasses, and Gifting into a single, unified workflow.
 
-Cashier handles all the boilerplate around in-game purchases so you can focus on what your items actually do. Gamepasses, developer products, and gifting — all from a single config.
+Instead of writing repetitive `MarketplaceService.ProcessReceipt` handlers, managing gamepass ownership checks on join, or wrestling with cross-server gifting logic, Cashier manages the entire lifecycle through a simple, centralized configuration.
+
+---
+
+## Key Features
+
+- **Unified Item System**: Treat Gamepasses, Developer Products, and custom Semipasses uniformly with identical query and purchase APIs.
+- **First-Class Player-to-Player Gifting**: Gift items to anyone—whether they are in the same server, playing on another server, or completely offline.
+- **Unsent Gift Recovery**: If a gift fails to deliver, it is stored in the sender's unsent vault so they never lose Robux.
+- **Safe Transactions**: Automated receipt processing with built-in purchase history logging to prevent double-granting exploits.
+- **Gated Purchases & Predicates**: Verify custom conditions (player level, inventory space, remaining stock) on the server before displaying purchase prompts.
+- **Limited Stock Items**: Easily build stock-limited items and seasonal drops using server-side predicates and callbacks.
+
+---
 
 ## Installation
 
-Add Cashier to your `wally.toml`:
+### Wally
+
+Add Cashier to your `wally.toml` dependencies:
 
 ```toml
 [dependencies]
-Cashier = "yuzkkj/monetization-service@1.4.0"
+Cashier = "yuzkkj/cashier@1.0.0"
 ```
 
-Then run:
+Then install it using the Wally CLI:
 
 ```bash
 wally install
 ```
 
+### Manual Installation
+
+You can also drop the Cashier package folder directly into `ReplicatedStorage.Packages` (or your preferred shared package location).
+
+---
+
 ## Setting Up
 
-Cashier has a server and a client module. Both need to be initialized before anything else.
+Cashier is split into two modules: `server` and `client`. Both should be initialized once when your game starts.
 
-### Server
+### 1. Server Setup
+
+On the server, require `Cashier.server` and call `Cashier:init()` with your item definitions:
 
 ```lua
-local DataService = require(path.to.DataService).server
-local Cashier = require(path.to.Cashier).server
-
-DataService:init() -- DataService must be initialized first
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Cashier = require(ReplicatedStorage.Packages.Cashier).server
 
 Cashier:init({
-    {
-        name = "VIP",
-        type = "Gamepass",
-        id = 123456,
-        giftId = 654321,
-        callback = function(player: Player)
-            DataService:arrayInsert(player, "titles", "VIP")
-            return true
-        end,
-    },
-    {
-        name = "500 Coins",
-        type = "DevProduct",
-        id = 789012,
-        callback = function(player: Player)
-            DataService:update(player, "coins", function(coins)
-                return coins + 500
-            end)
-            return true
-        end,
+    itemsData = {
+        {
+            name = "VIP",
+            type = "Gamepass",
+            id = 12345678,
+            giftId = 87654321,
+            callback = function(player: Player)
+                print(player.Name, "unlocked VIP perks!")
+                -- Grant titles, permissions, or benefits here
+                return true
+            end,
+        },
+        {
+            name = "1000 Coins",
+            type = "DevProduct",
+            id = 23456789,
+            callback = function(player: Player)
+                print(player.Name, "bought 1000 Coins!")
+                -- Update player's currency in your data service
+                return true
+            end,
+        },
     },
 })
 ```
 
-### Client
+:::tip
+Always return `true` from your `callback` when the reward is successfully applied. If a callback returns `false`, Cashier will keep the transaction pending so Roblox can retry it safely later.
+:::
+
+---
+
+### 2. Client Setup
+
+On the client, initialize `Cashier.client`. The client automatically synchronizes item definitions and owned items from the server.
 
 ```lua
-local Cashier = require(path.to.Cashier).client
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Cashier = require(ReplicatedStorage.Packages.Cashier).client
 
 Cashier:init()
 ```
 
-That's it. The client fetches item data from the server automatically.
+---
 
-## Purchasing Items
+## Quick Example: Buying an Item
 
-On the client, call `purchaseItem` with the item name. Cashier handles the prompt, receipt processing, and callback execution.
+Once initialized, prompting a purchase and listening for rewards on the client is straightforward:
 
 ```lua
-local Cashier = require(path.to.Cashier).client
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Cashier = require(ReplicatedStorage.Packages.Cashier).client
 
+-- Prompt the purchase when a button is clicked
 local buyButton = script.Parent
 buyButton.Activated:Connect(function()
-    Cashier:purchaseItem("VIP")
+    Cashier:purchase("VIP")
+end)
+
+-- Listen for when the player acquires the item
+Cashier.itemAcquired:Connect(function(itemName: string)
+    print(`Successfully acquired {itemName}!`)
 end)
 ```
 
-You can listen for when a purchase finishes:
-
-```lua
-Cashier.purchaseFinished:Connect(function(itemName, wasSuccessful, wasGift)
-    if wasSuccessful then
-        print("Bought", itemName)
-    end
-end)
-```
-
-## Predicates and Extra Params
-
-Some purchases need validation or extra context. Use `predicate` to gate the purchase and pass extra arguments through:
-
-```lua
--- Server config
-{
-    name = "Upgrade Unit",
-    type = "DevProduct",
-    id = 111222,
-    predicate = function(player: Player, unitId: string)
-        -- Validate that the unit exists and isn't maxed
-        return UnitService:canUpgrade(player, unitId)
-    end,
-    callback = function(player: Player, unitId: string)
-        UnitService:upgrade(player, unitId)
-        return true
-    end,
-}
-```
-
-```lua
--- Client
-Cashier:purchaseItem("Upgrade Unit", selectedUnit.id)
-```
-
-The extra params are passed to both the predicate and the callback.
-
-## Gifting
-
-Players can gift items to each other. The recipient gets the item even if they're offline — it'll be delivered next time they join.
-
-```lua
--- Client
-local success, errorMessage = Cashier:gift(recipientUserId, "VIP")
-if not success then
-    warn(errorMessage)
-end
-```
-
-You can override `onGiftReceived` on the client to show a notification:
-
-```lua
-function Cashier:onGiftReceived(giftData)
-    print(giftData.from, "gifted you", giftData.item)
-end
-```
-
-## Checking Ownership
-
-```lua
--- Client
-if Cashier:hasItem("VIP") then
-    -- Show VIP perks
-end
-
--- Server
-if Cashier:hasItem(player, "VIP") then
-    -- Grant VIP perks
-end
-```
-
-## Creating Limited Items
-
-While Cashier does not natively manage limited item state, Cashier can be used to make limited items. You can easily turn any item into a limited stock item by using a `predicate` to check if there is stock left before prompting the purchase and a `callback` to decrease the remaining amount when an item is bought.
-
-```lua
--- Example: Stock-limited item using predicate and callback
-local stockLeft = 100
-
-{
-    name = "Exclusive Sword",
-    type = "DevProduct",
-    id = 333444,
-    predicate = function(player: Player)
-        -- Prevent purchase if no stock remains
-        return stockLeft > 0
-    end,
-    callback = function(player: Player)
-        if stockLeft <= 0 then
-            return false
-        end
-
-        stockLeft -= 1
-        DataService:arrayInsert(player, "weapons", "Exclusive Sword")
-        return true
-    end,
-}
-```
-
-When a player attempts to purchase `"Exclusive Sword"`, Cashier checks `predicate` on the server before displaying the purchase prompt. Once the purchase succeeds, `callback` runs, decrements the available stock, and grants the item reward.
-
-## Item Types
-
-| Type | Behavior |
-|------|----------|
-| `"Gamepass"` | Purchased once, ownership persists across sessions via Roblox's gamepass system |
-| `"Semipass"` | Purchased once, ownership tracked in DataService (not a real gamepass) |
-| `"DevProduct"` | Can be purchased multiple times, not tracked as "owned" |
-
-## Notes
-
-- Always initialize `DataService` before `Cashier` on the server.
-- The `callback` should return `true` if the item was successfully granted. Returning `false` will cause the receipt to be retried later.
+---
 
 ## Next Steps
 
-Check the full API reference for every method, signal, and type available:
-
-- [CashierServer](/api/CashierServer) — server-side item registration, purchase processing, and gifting management.
-- [CashierClient](/api/CashierClient) — client-side purchase prompts and item queries.
+- Explore [Items & Monetization](./items-and-monetization) to learn about Gamepasses, DevProducts, Semipasses, and Predicates.
+- Learn about [Purchasing & Queries](./purchasing-and-inventory) to query item metadata, check ownership, and handle purchase signals.
+- Check out the [Gifting Guide](./gifting) for full details on player-to-player and offline gifting.
+- Read [Limited Stock Items](./limited-items) to learn how to create limited quantity items.

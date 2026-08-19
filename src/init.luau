@@ -1,7 +1,10 @@
-local CashierClient = require(script.CashierClient)
-local CashierServer = require(script.CashierServer)
+local client = require(script.CashierClient)
+local server = require(script.CashierServer)
+
+export type Client = client.CashierClient
+export type Server = server.CashierServer
 
 return {
-	client = CashierClient,
-	server = CashierServer,
+	client = client,
+	server = server,
 }

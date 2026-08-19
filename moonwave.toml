@@ -7,7 +7,7 @@ classOrder = [
 gitSourceBranch = "main"
 
 [docusaurus]
-tagline = "A clean, robust Roblox library to streamline Gamepass, Developer Product, and Gifting management."
+tagline = "A clean, robust library to streamline Gamepass, Developer Product, and Gifting management."
 
 [home]
 enabled = true
@@ -25,6 +25,6 @@ title = "Secure Transactions"
 description = "Fully automated and secure process-receipt loops with built-in purchase history logging. Eliminates duplicate-granting bugs and transaction exploits."
 
 [[navbar.items]]
-href = "https://github.com/yuzkkj/monetization-service"
+href = "https://github.com/yuzkkj/cashier"
 label = "GitHub"
 position = "right"

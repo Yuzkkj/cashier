@@ -1,102 +1,131 @@
 local MarketplaceService = game:GetService("MarketplaceService")
 local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
-if RunService:IsServer() then
+if not RunService:IsClient() then
 	return {} :: CashierClient
 end
 
---[=[
-    @type ItemType "DevProduct" | "Gamepass" | "Semipass"
-    @within CashierClient
+local Networker = require(ReplicatedStorage.Packages.Networker)
+local Sift = require(ReplicatedStorage.Packages.Sift)
+local Signal = require(ReplicatedStorage.Packages.Signal)
 
-    Determines the type of an item.
+local localPlayer = Players.LocalPlayer
+
+--[=[
+	@type ItemType "DevProduct" | "Gamepass" | "Semipass"
+	@within CashierClient
+
+	Determines the type of an item.
 ]=]
 type ItemType = "DevProduct" | "Gamepass" | "Semipass"
 
 --[=[
-    @interface Item
-    @within CashierClient
-    .name string -- The name of the item
-    .description string -- The description of the item
-    .iconId string -- The icon of the item. This is a full "rbxassetid://..." string
-    .type ItemType -- The type of the item
-    .id number -- The id of the gamepass of developer product linked with the item
-    .giftId number? -- The id of the developer product for gifting this item
-
-    Useful information of an item.
+	@interface Item
+	@within CashierClient
+	.name string -- The unique name of the item
+	.type ItemType -- The type of the item ("DevProduct", "Gamepass", or "Semipass")
+	.id number -- The Roblox GamePass ID or Developer Product ID
+	.giftId number? -- The Developer Product ID used for gifting this item
 ]=]
 type Item = {
 	name: string,
-	description: string?,
-	iconId: string?,
 	type: ItemType,
 	id: number,
 	giftId: number?,
 }
 
 --[=[
-    @interface GiftData
-    @within CashierClient
-    .item string -- The name of the item
-    .from number -- The id of the user that has gifted the item
-
-    Data from a gift.
+	@interface GiftData
+	@within CashierClient
+	.item string -- The name of the gifted item
+	.from number -- The UserId of the player who sent the gift
 ]=]
 type GiftData = {
 	item: string,
 	from: number,
 }
 
-local DataService = require(script.Parent.Parent.DataService).client
-local Networker = require(script.Parent.Parent.Networker)
-local Sift = require(script.Parent.Parent.Sift)
-local Signal = require(script.Parent.Parent.Signal)
-
-local localPlayer = Players.LocalPlayer
-
 --[=[
-    @class CashierClient
+	@class CashierClient
+	@client
 
-    The client-side of Cashier. Handles purchase prompts, item queries and gift sending.
+	The client-side singleton for Cashier. Handles purchase prompts, gifting, item queries, and ownership state.
 ]=]
-local CashierClient = {}
+local CashierClient = {
+	_items = {} :: { Item },
+	_purchasing = false,
+	--[=[
+		@prop giftingFailed Signal<string, number>
+		@within CashierClient
+
+		Fires when a gift delivery fails, passing the item name and recipient UserId.
+	]=]
+	giftingFailed = Signal.new() :: Signal.Signal<string, number>,
+	--[=[
+		@prop itemAcquired Signal<string>
+		@within CashierClient
+
+		Fires when the local player acquires a new item (e.g. gamepass or semipass).
+	]=]
+	itemAcquired = Signal.new() :: Signal.Signal<string>,
+	--[=[
+		@prop purchaseStarted Signal<()>
+		@within CashierClient
+
+		Fires when a purchase prompt is opened.
+	]=]
+	purchaseStarted = Signal.new(),
+	--[=[
+		@prop purchaseFinished Signal<string, boolean, boolean>
+		@within CashierClient
+
+		Fires when a purchase prompt closes, passing the item name, whether the purchase succeeded, and whether it was a gift.
+	]=]
+	purchaseFinished = Signal.new() :: Signal.Signal<string, boolean, boolean>,
+}
 
 --[=[
-    @method init
-    @within CashierClient
+	@method init
+	@within CashierClient
+	
+	Initializes the client-side of Cashier and begins listening for network replication from the server.
 
-    Initializes the client-side of Cashier.
+	```lua
+	local Cashier = require(path.to.Cashier).client
 
-    ```lua
-    local Cashier = require(path.to.Cashier).client
-
-    Cashier:init()
-    ```
-
-    :::warning
-    `:init(...)` should be called before using any other method.
-    :::
+	Cashier:init()
+	```
 ]=]
 function CashierClient.init(self: CashierClient): ()
-	self._purchasing = false
+	assert(RunService:IsClient(), "Cashier client-side can only be used by the client.")
+	assert(self._networker == nil, "Cashier client-side has already been initialized.")
+
 	self._networker = Networker.client.new("Cashier", self)
 
-	--[=[
-        @prop purchaseStarted Signal<>
-        @within CashierClient
+	self._networker:getServerChangedSignal("_purchasing"):Connect(function(state)
+		if not state then
+			return
+		end
 
-        A signal that fires when a purchase prompt is shown to the player.
-    ]=]
-	self.purchaseStarted = Signal.new()
+		self.purchaseStarted:Fire()
+	end)
 
-	--[=[
-        @prop purchaseFinished Signal<string, boolean, boolean>
-        @within CashierClient
+	local previous = self._owned
+	self._networker:getServerChangedSignal("_owned"):Connect(function(owned)
+		if not previous then
+			previous = owned
+			return
+		end
 
-        A signal that fires when a purchase prompt is closed, providing the name of the item, a boolean indicating whether the purchase was completed successfully, and a boolean indicating if the purchase was a gift.
-    ]=]
-	self.purchaseFinished = Signal.new()
+		local acquired = Sift.Set.difference(owned, previous)
+		for itemName in acquired do
+			self.itemAcquired:Fire(itemName)
+		end
+
+		previous = owned
+	end)
 
 	MarketplaceService.PromptGamePassPurchaseFinished:Connect(function(player, gamepassId, wasPurchased)
 		if player ~= localPlayer then
@@ -135,13 +164,9 @@ function CashierClient.init(self: CashierClient): ()
 	end)
 end
 
-function CashierClient._purchaseStarted(self: CashierClient): ()
-	if self._purchasing then
-		return
-	end
-
-	self._purchasing = true
-	self.purchaseStarted:Fire()
+function CashierClient._giftingFailed(self: CashierClient, itemName: string, recipientId: number): ()
+	self._purchasing = false
+	self.giftingFailed:Fire(itemName, recipientId)
 end
 
 function CashierClient._purchaseCompleted(self: CashierClient, itemName: string, wasGift: boolean): ()
@@ -154,150 +179,149 @@ function CashierClient._purchaseCompleted(self: CashierClient, itemName: string,
 end
 
 --[=[
-    @method getAllItems
-    @within CashierClient
-    @return { Item }
+	@method getUnsentItems
+	@within CashierClient
+	@yields
+	@return { [string]: number } -- A dictionary mapping item names to unsent gift counts
+	
+	Fetches the list of unsent gifts owned by the local player that were not delivered (e.g. due to delivery failure).
 
-    Returns an array with all registered items.
+	```lua
+	local Cashier = require(path.to.Cashier).client
+	
+	local unsentItems = Cashier:getUnsentItems()
 
-    ```lua
-    local Cashier = require(path.to.Cashier).client
+	for itemName, amount in unsentItems do
+		print(`You have {amount} unsent {itemName}(s).`)
+	end
+	```
+]=]
+function CashierClient.getUnsentItems(self: CashierClient): { [string]: number }
+	return self._networker:fetch("getUnsentItems")
+end
 
-    for _, item in Cashier:getAllItems() do
-        print(item.name, item.type)
-    end
-    ```
+--[=[
+	@method getAllItems
+	@within CashierClient
+	@return { Item } -- An array containing all registered items
+
+	Returns an array of all registered items.
+
+	```lua
+	local Cashier = require(path.to.Cashier).client
+
+	local items = Cashier:getAllItems()
+
+	for _, item in items do
+		print(item.name, item.type)
+	end
+	```
 ]=]
 function CashierClient.getAllItems(self: CashierClient): { Item }
-	if not self._items then
-		self._items = self._networker:fetch("getAllItems")
-	end
-
 	return self._items
-end
-
---[=[
-    @method getItemById
-    @within CashierClient
-    @param itemId number
-    @return Item?
-
-    Retrieves the info of an item with the given id.
-    `itemId` can be either a normal id or a giftId.
-
-    ```lua
-    local Cashier = require(path.to.Cashier).client
-
-    local item = Cashier:getItemById(1234)
-    for k, v in item do
-        print(k, v)
-    end
-    ```
-]=]
-function CashierClient.getItemById(self: CashierClient, itemId: number): Item?
-	local items = self:getAllItems()
-	local index = Sift.Array.findWhere(items, function(item: Item)
-		return item.id == itemId or item.giftId == itemId
-	end)
-
-	return items[index]
-end
-
---[=[
-    @method getItemByName
-    @within CashierClient
-    @param itemName string
-    @return Item?
-
-    Retrieves the info of an item with the given name.
-
-    ```lua
-    local Cashier = require(path.to.Cashier).client
-
-    local item = Cashier:getItemByName("VIP")
-    for k, v in item do
-        print(k, v)
-    end
-    ```
-]=]
-function CashierClient.getItemByName(self: CashierClient, itemName: string): Item?
-	local items = self:getAllItems()
-	local index = Sift.Array.findWhere(items, function(item: Item)
-		return item.name == itemName
-	end)
-
-	return items[index]
 end
 
 --[=[
 	@method getItemsOfType
 	@within CashierClient
-	@param itemType ItemType
-	@return { Item }
+	@param itemType ItemType -- The type of items to retrieve ("DevProduct" | "Gamepass" | "Semipass")
+	@return { Item } -- An array containing items of the specified type
 
-	Returns an array with all items of the given type.
+	Retrieves all registered items of a specific type.
 
 	```lua
 	local Cashier = require(path.to.Cashier).client
 
-	for _, item in Cashier:getItemsOfType("Gamepass") do
-		print(item.name, item.id)
+	local gamepasses = Cashier:getItemsOfType("Gamepass")
+
+	for _, item in gamepasses do
+		print(item.name)
 	end
 	```
 ]=]
 function CashierClient.getItemsOfType(self: CashierClient, itemType: ItemType): { Item }
-	local items = self:getAllItems()
-	return Sift.Array.filter(items, function(item: Item)
+	return Sift.Array.filter(self._items, function(item: Item)
 		return item.type == itemType
 	end)
 end
 
---[=[
-	@method isGiftId
+--[=[ 
+	@method getItemByName
 	@within CashierClient
-	@param id number
-	@return boolean
+	@param itemName string -- The name of the item to retrieve
+	@return Item? -- The item with the specified name, or nil if not found
 
-	Checks if an id is the `giftId` of an item.
+	Retrieves a registered item by its name.
 
 	```lua
 	local Cashier = require(path.to.Cashier).client
 
-	local isGiftId = Cashier:isGiftId(4321)
-	print(isGiftId)
+	local item = Cashier:getItemByName("VIP")
+
+	if item then
+		print("Found item with ID:", item.id)
+	end
 	```
 ]=]
-function CashierClient.isGiftId(self: CashierClient, id): boolean
-	local item = self:getItemById(id)
-	if not item then
-		return false
-	end
+function CashierClient.getItemByName(self: CashierClient, itemName: string): Item?
+	local index = Sift.Array.findWhere(self._items, function(item: Item)
+		return item.name == itemName
+	end)
 
-	return item.giftId == id
+	return index and self._items[index]
 end
 
---[=[
-    @method getItemPrice
-    @within CashierClient
-    @yields
-    @param itemName string
-    @return number
+--[=[ 
+	@method getItemById
+	@within CashierClient
+	@param itemId number -- The ID of the item to retrieve
+	@return Item? -- The item with the specified ID, or nil if not found
 
-    Returns the price in robux of an item.
+	Retrieves a registered item by its ID.
 
-    ```lua
-    local Cashier = require(path.to.Cashier).client
+	```lua
+	local Cashier = require(path.to.Cashier).client
 
-    local priceLabel = script.Parent
+	local item = Cashier:getItemById(123456)
 
-    local price = Cashier:getItemPrice("VIP")
-    priceLabel.Text = `${price}`
-    ```
+	if item then
+		print("Found item:", item.name)
+	end
+	```
+
+	:::info
+	`itemId` can be a standard product/gamepass ID or a gift Developer Product ID.
+	:::
+]=]
+function CashierClient.getItemById(self: CashierClient, itemId: number): Item?
+	local index = Sift.Array.findWhere(self._items, function(item: Item)
+		return item.id == itemId or item.giftId == itemId
+	end)
+
+	return index and self._items[index]
+end
+
+--[=[ 
+	@method getItemPrice
+	@within CashierClient
+	@yields
+	@param itemName string -- The name of the item to get the price of
+	@return number -- The price of the item in Robux, or 0 if unavailable
+
+	Retrieves the price of an item in Robux from MarketplaceService.
+
+	```lua
+	local Cashier = require(path.to.Cashier).client
+
+	local price = Cashier:getItemPrice("VIP")
+
+	print(`VIP costs {price} Robux`)
+	```
 ]=]
 function CashierClient.getItemPrice(self: CashierClient, itemName: string): number
 	local item = self:getItemByName(itemName)
 	if not item then
-		return
+		return 0
 	end
 
 	local success, productInfo = pcall(function()
@@ -307,118 +331,131 @@ function CashierClient.getItemPrice(self: CashierClient, itemName: string): numb
 		)
 	end)
 
-	return if success and productInfo then productInfo.PriceInRobux else 0
+	return if success and productInfo and productInfo.PriceInRobux then productInfo.PriceInRobux else 0
 end
 
---[=[
-    @method hasItem
-    @within CashierClient
-    @param itemName string
-    @return boolean
+--[=[ 
+	@method isGiftId
+	@within CashierClient
+	@param itemId number -- The ID to check
+	@return boolean -- True if the ID is a registered gift product ID, false otherwise
 
-    Checks if the user has the item with the given name.
+	Checks if an item ID is a registered gift Developer Product ID.
 
-    ```lua
-    local Cashier = require(path.to.Cashier).client
+	```lua
+	local Cashier = require(path.to.Cashier).client
 
-    local textLabel = script.Parent
+	local id = 123456
 
-    local hasItem = Cashier:hasItem("VIP")
-    if hasItem then
-        textLabel.Text = "Owned"
-    end
-    ```
+	print(Cashier:isGiftId(id))
+	```
 ]=]
-function CashierClient.hasItem(self: CashierClient, itemName: string): boolean
-	if not self:getItemByName(itemName) then
-		warn(`No item with name "{itemName}"`)
-		return false
-	end
-
-	local items = DataService:get("_items")
-	if not items then
-		return false
-	end
-
-	return Sift.Set.has(items, itemName)
+function CashierClient.isGiftId(self: CashierClient, itemId: number): boolean
+	return Sift.Array.findWhere(self._items, function(item: Item)
+		return item.giftId == itemId
+	end) ~= nil
 end
 
---[=[
-    @method purchaseItem
-    @within CashierClient
-    @param itemName string
-    @param ... any? -- Extra params passed to the item's predicate
+--[=[ 
+	@method has
+	@within CashierClient
+	@param itemName string -- The name of the item to check
+	@return boolean -- True if the player owns the item, false otherwise
 
-    Prompts the local player to purchase the item with the given name.
+	Checks if the local player owns a specific item.
 
-    ```lua
-    local Cashier = require(path.to.Cashier).client
+	```lua
+	local Cashier = require(path.to.Cashier).client
 
-    local button = script.Parent
-    button.Activated:Connect(function()
-        Cashier:purchaseItem("VIP")
-    end)
-    ```
+	local hasItem = Cashier:has("VIP")
+
+	if hasItem then
+		print("You own the VIP gamepass.")
+	end
+	```
 ]=]
-function CashierClient.purchaseItem(self: CashierClient, itemName: string, ...: any?): ()
+function CashierClient.has(self: CashierClient, itemName: string): boolean
+	return if self._owned then Sift.Set.has(self._owned, itemName) else false
+end
+
+--[=[ 
+	@method purchase
+	@within CashierClient
+	@param itemName string -- The name of the item to purchase
+	@param ... any? -- Optional additional arguments passed to the server predicate and callback
+
+	Initiates a purchase prompt for the specified item.
+
+	```lua
+	local Cashier = require(path.to.Cashier).client
+	local button = script.Parent
+
+	button.Activated:Connect(function()
+		Cashier:purchase("VIP")
+	end)
+	```
+
+	:::warning
+	This method should only be called on the client.
+	:::
+]=]
+function CashierClient.purchase(self: CashierClient, itemName: string, ...: any?): ()
 	if self._purchasing then
 		return
 	end
 
-	self._networker:fetch("purchaseItem", itemName, ...)
+	self._networker:fire("_purchase", itemName, ...)
 end
 
---[=[
-    @method gift
-    @within CashierClient
-    @param userId number
-    @param itemName string
-    @return boolean -- Whether the gift was successfully initiated
-    @return string? -- An error message in case the user could not gift the other one
+--[=[ 
+	@method gift
+	@within CashierClient
+	@yields
+	@param recipientId number -- The UserId of the player to gift the item to
+	@param itemName string -- The name of the item to gift
+	@return boolean -- True if the gift was successfully initiated or delivered, false otherwise
+	@return string? -- An error message if the gift request failed
 
-    Prompts the user to purchase the item for the other player.
+	Sends a gift to another user by their UserId.
 
-    ```lua
-    local Cashier = require(path.to.Cashier).client
+	```lua
+	local Cashier = require(path.to.Cashier).client
 
-    local giftButton = script.Parent
-    giftButton.Activated:Connect(function()
-        Cashier:gift(6969, "VIP")
-    end)
-    ```
+	local success, errMsg = Cashier:gift(123456, "VIP")
+
+	if not success then
+		warn("Gifting failed:", errMsg)
+	end
+	```
 ]=]
-function CashierClient.gift(self: CashierClient, userId: number, itemName: string): (boolean, string?)
+function CashierClient.gift(self: CashierClient, recipientId: number, itemName: string): (boolean, string?)
 	if self._purchasing then
 		return false
 	end
 
-	return self._networker:fetch("gift", userId, itemName)
+	return self._networker:fetch("_gift", recipientId, itemName)
 end
 
 --[=[
-    @method onGiftReceived
-    @within CashierClient
-    @tag Override
-    @param giftData GiftData
+	@method onGiftReceived
+	@within CashierClient
+	@param giftData GiftData -- Information about the received gift
 
-    Overridable method called when the user receives a gift.
+	An overridable callback invoked when the local player receives a gift. Can be overridden to display custom UI or notifications.
 
-    ```lua
-    local Cashier = require(path.to.Cashier).client
+	```lua
+	local Cashier = require(path.to.Cashier).client
 
-    function Cashier:onGiftReceived(giftData: GiftData)
-        print(`{giftData.from} gifted you {giftData.item}!`)
-    end
-    ```
+	function Cashier:onGiftReceived(giftData)
+		print(`You received {giftData.item} from UserId {giftData.from}.`)
+	end
+	```
 ]=]
-function CashierClient.onGiftReceived(self: CashierClient, giftData: GiftData) end
+function CashierClient.onGiftReceived(self: CashierClient, giftData: GiftData): () end
 
-type CashierClient = typeof(CashierClient) & {
-	_items: { Item },
-	_purchasing: boolean,
+export type CashierClient = typeof(CashierClient) & {
+	_owned: { [string]: true },
 	_networker: Networker.Client,
-	purchaseStarted: Signal.Signal<>,
-	purchaseFinished: Signal.Signal<string, boolean, boolean>,
 }
 
 return CashierClient :: CashierClient
