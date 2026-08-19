@@ -2,45 +2,166 @@
 <html lang="en" dir="ltr" class="plugin-moonwave plugin-id-moonwave" data-has-hydrated="false">
 <head>
 <meta charset="UTF-8">
-<meta name="generator" content="Docusaurus v3.7.0">
-<title data-rh="true">CashierClient | Cashier</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://Yuzkkj.github.io/cashier/api/CashierClient"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docusaurus_tag" content="default"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docsearch:docusaurus_tag" content="default"><meta data-rh="true" property="og:title" content="CashierClient | Cashier"><meta data-rh="true" name="description" content="The client-side of Cashier. Handles purchase prompts, item queries and gift sending."><meta data-rh="true" property="og:description" content="The client-side of Cashier. Handles purchase prompts, item queries and gift sending."><link data-rh="true" rel="canonical" href="https://Yuzkkj.github.io/cashier/api/CashierClient"><link data-rh="true" rel="alternate" href="https://Yuzkkj.github.io/cashier/api/CashierClient" hreflang="en"><link data-rh="true" rel="alternate" href="https://Yuzkkj.github.io/cashier/api/CashierClient" hreflang="x-default"><link rel="stylesheet" href="/cashier/assets/css/styles.5cbed574.css">
-<script src="/cashier/assets/js/runtime~main.fd27ae7b.js" defer="defer"></script>
-<script src="/cashier/assets/js/main.89b06263.js" defer="defer"></script>
+<meta name="generator" content="Docusaurus v3.10.1">
+<title data-rh="true">CashierClient | Cashier</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://Yuzkkj.github.io/cashier/api/CashierClient"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docusaurus_tag" content="default"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docsearch:docusaurus_tag" content="default"><meta data-rh="true" property="og:title" content="CashierClient | Cashier"><meta data-rh="true" name="description" content="The client-side singleton for Cashier. Handles purchase prompts, gifting, item queries, and ownership state."><meta data-rh="true" property="og:description" content="The client-side singleton for Cashier. Handles purchase prompts, gifting, item queries, and ownership state."><link data-rh="true" rel="canonical" href="https://Yuzkkj.github.io/cashier/api/CashierClient"><link data-rh="true" rel="alternate" href="https://Yuzkkj.github.io/cashier/api/CashierClient" hreflang="en"><link data-rh="true" rel="alternate" href="https://Yuzkkj.github.io/cashier/api/CashierClient" hreflang="x-default"><link rel="stylesheet" href="/cashier/assets/css/styles.5ec48d9a.css">
+<script src="/cashier/assets/js/runtime~main.d92e4248.js" defer="defer"></script>
+<script src="/cashier/assets/js/main.9b488448.js" defer="defer"></script>
 </head>
-<body class="navigation-with-keyboard">
-<script>!function(){function t(t){document.documentElement.setAttribute("data-theme",t)}var e=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();null!==e?t(e):window.matchMedia("(prefers-color-scheme: dark)").matches?t("dark"):(window.matchMedia("(prefers-color-scheme: light)").matches,t("light"))}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><div role="region" aria-label="Skip to main content"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Skip to main content</a></div><nav aria-label="Main" class="navbar navbar--fixed-top"><div class="navbar__inner"><div class="navbar__items"><button aria-label="Toggle navigation bar" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/cashier/"><b class="navbar__title text--truncate">Cashier</b></a><a class="navbar__item navbar__link" href="/cashier/docs/intro">Docs</a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/cashier/api/">API</a></div><div class="navbar__items navbar__items--right"><a href="https://github.com/yuzkkj/monetization-service" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a><a href="https://github.com/Yuzkkj/cashier" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="Switch between dark and light mode (currently light mode)" aria-label="Switch between dark and light mode (currently light mode)" aria-live="polite" aria-pressed="false"><svg viewBox="0 0 24 24" width="24" height="24" class="lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" class="darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"><div class="navbar__search"><span aria-label="expand searchbar" role="button" class="search-icon" tabindex="0"></span><input id="search_input_react" type="search" placeholder="Loading..." aria-label="Search" class="navbar__search-input search-bar" disabled=""></div></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="main-wrapper mainWrapper_z2l0 docPageContainer_wNNk"><div class="docPage_Dpn1"><div class="docSidebarContainer_o_re"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/cashier/api/CashierServer">​Cashier​Server</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" href="/cashier/api/CashierClient">​Cashier​Client</a></li></ul></nav></div></div><main class="docMainContainer_HJE1"><div class="container padding-vert--lg"><div class="row"><div class="col docItemCol_MU3C"><div class="docItemContainer_Wv98"><article><div class="member_J0w1 markdown"><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_oUs_"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><header><h1 class="docTitle_mZRt" style="text-decoration:none"><span style="display:inline-block">Cashier</span><span style="display:inline-block">Client</span></h1><div class="luaClassTags_EipM"></div><div>
-<p>The client-side of Cashier. Handles purchase prompts, item queries and gift sending.</p>
-</div></header><h2 class="anchor anchorWithStickyNavbar_LWe7" id="types">Types<a href="#types" class="hash-link" aria-label="Direct link to Types" title="Direct link to Types">​</a></h2><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="ItemType"><code style="text-decoration:none">ItemType</code><a href="#ItemType" class="hash-link" aria-label="Direct link to ItemType" title="Direct link to ItemType">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/Yuzkkj/cashier/blob/main/src/CashierClient.luau#L15"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code class="purple_ieR2">type</code> <code>ItemType<!-- --> = </code> <code class="blue_P4bS">&quot;DevProduct&quot;</code><code class="op_lSLc"> | </code><code class="blue_P4bS">&quot;Gamepass&quot;</code><code class="op_lSLc"> | </code><code class="blue_P4bS">&quot;Semipass&quot;</code></div><div>
+<body>
+<svg style="display: none;"><defs>
+<symbol id="theme-svg-external-link" viewBox="0 0 24 24"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
+</defs></svg>
+<script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")),document.documentElement.setAttribute("data-theme-choice",t||"system")}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><div role="region" aria-label="Skip to main content"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Skip to main content</a></div><nav aria-label="Main" class="theme-layout-navbar navbar navbar--fixed-top"><div class="navbar__inner"><div class="theme-layout-navbar-left navbar__items"><button aria-label="Toggle navigation bar" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/cashier/"><b class="navbar__title text--truncate">Cashier</b></a><a class="navbar__item navbar__link" href="/cashier/docs/intro">Docs</a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/cashier/api/">API</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href="https://github.com/yuzkkj/cashier" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a><a href="https://github.com/Yuzkkj/cashier" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="system mode" aria-label="Switch between dark and light mode (currently system mode)"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP systemToggleIcon_QzmC"><path fill="currentColor" d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"><div class="navbar__search"><span aria-label="expand searchbar" role="button" class="search-icon" tabindex="0"></span><input id="search_input_react" type="search" placeholder="Loading..." aria-label="Search" class="navbar__search-input search-bar" disabled=""></div></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="theme-layout-main main-wrapper mainWrapper_z2l0 docPageContainer_wNNk"><div class="docPage_Dpn1"><div class="docSidebarContainer_o_re"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/cashier/api/CashierServer"><span title="​Cashier​Server" class="linkLabel_WmDU">​Cashier​Server</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" href="/cashier/api/CashierClient"><span title="​Cashier​Client" class="linkLabel_WmDU">​Cashier​Client</span></a></li></ul></nav></div></div><main class="docMainContainer_HJE1"><div class="container padding-vert--lg"><div class="row"><div class="col docItemCol_MU3C"><div class="docItemContainer_Wv98"><article><div class="member_J0w1 markdown"><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_oUs_"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><header><h1 class="docTitle_mZRt" style="text-decoration:none"><span style="display:inline-block">Cashier</span><span style="display:inline-block">Client</span></h1><div class="luaClassTags_EipM"><span class="badge_Ba2I" style="color:#349AD5"><span class="badgeTooltip_cWXP">This item only works when running on the client.</span><span class="badgeToolTipTail_H9D_"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 337 304" fill="#349AD5" role="img" aria-label="This item only works when running on the client."><path d="M0 201h337v36H0v-36zm0 0zM0 0v188h337V0H0zM218 287h30c12 0 12 17 0 17H88c-11 0-11-17 0-17h31l10-39h79l10 39z"></path></svg> <!-- -->Client</span></span></div><div>
+<p>The client-side singleton for Cashier. Handles purchase prompts, gifting, item queries, and ownership state.</p>
+</div></header><h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="types">Types<a href="#types" class="hash-link" aria-label="Direct link to Types" title="Direct link to Types" translate="no">​</a></h2><div class="divider_rE5g"></div><h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="ItemType"><code style="text-decoration:none">ItemType</code><a href="#ItemType" class="hash-link" aria-label="Direct link to ItemType" title="Direct link to ItemType" translate="no">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/Yuzkkj/cashier/blob/main/src/CashierClient.luau#L22"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code class="purple_ieR2">type</code> <code>ItemType<!-- --> = </code> <code class="blue_P4bS">&quot;DevProduct&quot;</code><code class="op_lSLc"> | </code><code class="blue_P4bS">&quot;Gamepass&quot;</code><code class="op_lSLc"> | </code><code class="blue_P4bS">&quot;Semipass&quot;</code></div><div>
 <p>Determines the type of an item.</p>
-</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="Item"><code style="text-decoration:none">Item</code><a href="#Item" class="hash-link" aria-label="Direct link to Item" title="Direct link to Item">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/Yuzkkj/cashier/blob/main/src/CashierClient.luau#L29"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code class="purple_ieR2">interface</code> <code>Item<!-- --> <!-- -->{</code><div class="inset_uKQm"><div><code>name<!-- -->: </code><code class="blue_P4bS">string</code><span class="inlineDescription_G7Er">-- <span>
-<p>The name of the item</p>
-</span></span></div><div><code>description<!-- -->: </code><code class="blue_P4bS">string</code><span class="inlineDescription_G7Er">-- <span>
-<p>The description of the item</p>
-</span></span></div><div><code>iconId<!-- -->: </code><code class="blue_P4bS">string</code><span class="inlineDescription_G7Er">-- <span>
-<p>The icon of the item. This is a full "rbxassetid://..." string</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="Item"><code style="text-decoration:none">Item</code><a href="#Item" class="hash-link" aria-label="Direct link to Item" title="Direct link to Item" translate="no">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/Yuzkkj/cashier/blob/main/src/CashierClient.luau#L32"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code class="purple_ieR2">interface</code> <code>Item<!-- --> <!-- -->{</code><div class="inset_uKQm"><div><code>name<!-- -->: </code><code class="blue_P4bS">string</code><span class="inlineDescription_G7Er">-- <span>
+<p>The unique name of the item</p>
 </span></span></div><div><code>type<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/cashier/api/CashierServer#ItemType">ItemType</a></code><span class="inlineDescription_G7Er">-- <span>
-<p>The type of the item</p>
+<p>The type of the item ("DevProduct", "Gamepass", or "Semipass")</p>
 </span></span></div><div><code>id<!-- -->: </code><code class="blue_P4bS">number</code><span class="inlineDescription_G7Er">-- <span>
-<p>The id of the gamepass of developer product linked with the item</p>
+<p>The Roblox GamePass ID or Developer Product ID</p>
 </span></span></div><div><code>giftId<!-- -->: </code><code class="blue_P4bS">number?</code><span class="inlineDescription_G7Er">-- <span>
-<p>The id of the developer product for gifting this item</p>
-</span></span></div></div><code>}</code></div><div>
-<p>Useful information of an item.</p>
-</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="GiftData"><code style="text-decoration:none">GiftData</code><a href="#GiftData" class="hash-link" aria-label="Direct link to GiftData" title="Direct link to GiftData">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/Yuzkkj/cashier/blob/main/src/CashierClient.luau#L46"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code class="purple_ieR2">interface</code> <code>GiftData<!-- --> <!-- -->{</code><div class="inset_uKQm"><div><code>item<!-- -->: </code><code class="blue_P4bS">string</code><span class="inlineDescription_G7Er">-- <span>
-<p>The name of the item</p>
-</span></span></div><div><code>from<!-- -->: </code><code class="blue_P4bS">number</code><span class="inlineDescription_G7Er">-- <span>
-<p>The id of the user that has gifted the item</p>
-</span></span></div></div><code>}</code></div><div>
-<p>Data from a gift.</p>
-</div><h2 class="anchor anchorWithStickyNavbar_LWe7" id="properties">Properties<a href="#properties" class="hash-link" aria-label="Direct link to Properties" title="Direct link to Properties">​</a></h2><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="purchaseStarted"><code style="text-decoration:none">purchaseStarted</code><a href="#purchaseStarted" class="hash-link" aria-label="Direct link to purchaseStarted" title="Direct link to purchaseStarted">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/Yuzkkj/cashier/blob/main/src/CashierClient.luau#L91"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>CashierClient<!-- -->.<!-- -->purchaseStarted<!-- -->:<!-- --> </code> <code class="blue_P4bS">Signal</code><code class="op_lSLc">&lt;</code><code class="op_lSLc">&gt;</code></div><div>
-<p>A signal that fires when a purchase prompt is shown to the player.</p>
-</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="purchaseFinished"><code style="text-decoration:none">purchaseFinished</code><a href="#purchaseFinished" class="hash-link" aria-label="Direct link to purchaseFinished" title="Direct link to purchaseFinished">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/Yuzkkj/cashier/blob/main/src/CashierClient.luau#L99"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>CashierClient<!-- -->.<!-- -->purchaseFinished<!-- -->:<!-- --> </code> <code class="blue_P4bS">Signal</code><code class="op_lSLc">&lt;</code><code class="blue_P4bS">string,</code><code class="blue_P4bS">boolean,</code><code class="blue_P4bS">boolean</code><code class="op_lSLc">&gt;</code></div><div>
-<p>A signal that fires when a purchase prompt is closed, providing the name of the item, a boolean indicating whether the purchase was completed successfully, and a boolean indicating if the purchase was a gift.</p>
-</div><h2 class="anchor anchorWithStickyNavbar_LWe7" id="functions">Functions<a href="#functions" class="hash-link" aria-label="Direct link to Functions" title="Direct link to Functions">​</a></h2><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="init"><code style="text-decoration:none">init</code><a href="#init" class="hash-link" aria-label="Direct link to init" title="Direct link to init">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/Yuzkkj/cashier/blob/main/src/CashierClient.luau#L81"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>CashierClient<!-- -->:</code><code class="green_DgR4">init</code><code>(</code><code>) → </code><code>(</code><code>)</code></div><div>
-<p>Initializes the client-side of Cashier.</p>
+<p>The Developer Product ID used for gifting this item</p>
+</span></span></div></div><code>}</code></div><div></div><h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="functions">Functions<a href="#functions" class="hash-link" aria-label="Direct link to Functions" title="Direct link to Functions" translate="no">​</a></h2><div class="divider_rE5g"></div><h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="init"><code style="text-decoration:none">init</code><a href="#init" class="hash-link" aria-label="Direct link to init" title="Direct link to init" translate="no">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/Yuzkkj/cashier/blob/main/src/CashierClient.luau#L101"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>CashierClient<!-- -->:</code><code class="green_DgR4">init</code><code>(</code><code>) → </code><code>(</code><code>)</code></div><div>
+<p>Initializes the client-side of Cashier and begins listening for network replication from the server.</p>
 <pre class="language-lua"><code class="language-lua"><span class="token keyword">local</span> Cashier <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span>path<span class="token punctuation">.</span>to<span class="token punctuation">.</span>Cashier<span class="token punctuation">)</span><span class="token punctuation">.</span>client
 
 Cashier<span class="token punctuation">:</span><span class="token function">init</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+</code></pre>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="getUnsentItems"><code style="text-decoration:none">getUnsentItems</code><a href="#getUnsentItems" class="hash-link" aria-label="Direct link to getUnsentItems" title="Direct link to getUnsentItems" translate="no">​</a></h3><span class="badge_Ba2I" style="color:#f1c40f"><span class="badgeTooltip_cWXP">This is a yielding function. When called, it will pause the Lua thread that called the function until a result is ready to be returned, without interrupting other scripts.</span><span class="badgeToolTipTail_H9D_"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="#f1c40f" role="img" aria-label="This is a yielding function. When called, it will pause the Lua thread that called the function until a result is ready to be returned, without interrupting other scripts."><path d="M96.4 11.9c-1.4-2.5-4-4-6.9-4H10.8c-2.9 0-5.4 1.5-6.9 4-1.4 2.5-1.4 5.5 0 7.9L43.3 88c1.4 2.5 4 4 6.9 4 2.9 0 5.4-1.5 6.9-4l39.3-68.2c1.4-2.4 1.4-5.4 0-7.9zM46.3 54.5c1.1-1.1 2.3-1.6 3.8-1.6s2.8.5 3.8 1.6c1.1 1.1 1.6 2.3 1.6 3.8s-.5 2.8-1.6 3.8c-1.1 1.1-2.3 1.6-3.8 1.6s-2.8-.5-3.8-1.6c-1.1-1.1-1.6-2.3-1.6-3.8.1-1.5.6-2.8 1.6-3.8zm-.5-4.9V21.8h8.8v27.8h-8.8z"></path></svg> <!-- -->Yields</span></span><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/Yuzkkj/cashier/blob/main/src/CashierClient.luau#L199"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>CashierClient<!-- -->:</code><code class="green_DgR4">getUnsentItems</code><code>(</code><code>) → </code><code class="purple_ieR2">{</code><span><code>[</code><code class="blue_P4bS">string</code><code>]</code></span><code>: </code><code class="blue_P4bS">number</code><code class="purple_ieR2">}</code><span class="inlineDescription_G7Er">-- <span>
+<p>A dictionary mapping item names to unsent gift counts</p>
+</span></span></div><div>
+<p>Fetches the list of unsent gifts owned by the local player that were not delivered (e.g. due to delivery failure).</p>
+<pre class="language-lua"><code class="language-lua"><span class="token keyword">local</span> Cashier <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span>path<span class="token punctuation">.</span>to<span class="token punctuation">.</span>Cashier<span class="token punctuation">)</span><span class="token punctuation">.</span>client
+
+<span class="token keyword">local</span> unsentItems <span class="token operator">=</span> Cashier<span class="token punctuation">:</span><span class="token function">getUnsentItems</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span class="token keyword">for</span> itemName<span class="token punctuation">,</span> amount <span class="token keyword">in</span> unsentItems <span class="token keyword">do</span>
+	<span class="token function">print</span><span class="token punctuation">(</span>`You <span class="token function">have</span> <span class="token punctuation">{</span>amount<span class="token punctuation">}</span> <span class="token function">unsent</span> <span class="token punctuation">{</span>itemName<span class="token punctuation">}</span><span class="token punctuation">(</span>s<span class="token punctuation">)</span><span class="token punctuation">.</span>`<span class="token punctuation">)</span>
+<span class="token keyword">end</span>
+</code></pre>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="getAllItems"><code style="text-decoration:none">getAllItems</code><a href="#getAllItems" class="hash-link" aria-label="Direct link to getAllItems" title="Direct link to getAllItems" translate="no">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/Yuzkkj/cashier/blob/main/src/CashierClient.luau#L220"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>CashierClient<!-- -->:</code><code class="green_DgR4">getAllItems</code><code>(</code><code>) → </code><code class="purple_ieR2">{</code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/cashier/api/CashierServer#Item">Item</a></code><code class="purple_ieR2">}</code><span class="inlineDescription_G7Er">-- <span>
+<p>An array containing all registered items</p>
+</span></span></div><div>
+<p>Returns an array of all registered items.</p>
+<pre class="language-lua"><code class="language-lua"><span class="token keyword">local</span> Cashier <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span>path<span class="token punctuation">.</span>to<span class="token punctuation">.</span>Cashier<span class="token punctuation">)</span><span class="token punctuation">.</span>client
+
+<span class="token keyword">local</span> items <span class="token operator">=</span> Cashier<span class="token punctuation">:</span><span class="token function">getAllItems</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span class="token keyword">for</span> _<span class="token punctuation">,</span> item <span class="token keyword">in</span> items <span class="token keyword">do</span>
+	<span class="token function">print</span><span class="token punctuation">(</span>item<span class="token punctuation">.</span>name<span class="token punctuation">,</span> item<span class="token punctuation">.</span>type<span class="token punctuation">)</span>
+<span class="token keyword">end</span>
+</code></pre>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="getItemsOfType"><code style="text-decoration:none">getItemsOfType</code><a href="#getItemsOfType" class="hash-link" aria-label="Direct link to getItemsOfType" title="Direct link to getItemsOfType" translate="no">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/Yuzkkj/cashier/blob/main/src/CashierClient.luau#L242"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>CashierClient<!-- -->:</code><code class="green_DgR4">getItemsOfType</code><code>(</code><div class="inset_uKQm"><div><code>itemType<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/cashier/api/CashierServer#ItemType">ItemType</a></code><span class="inlineDescription_G7Er">-- <span>
+<p>The type of items to retrieve ("DevProduct" | "Gamepass" | "Semipass")</p>
+</span></span></div></div><code>) → </code><code class="purple_ieR2">{</code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/cashier/api/CashierServer#Item">Item</a></code><code class="purple_ieR2">}</code><span class="inlineDescription_G7Er">-- <span>
+<p>An array containing items of the specified type</p>
+</span></span></div><div>
+<p>Retrieves all registered items of a specific type.</p>
+<pre class="language-lua"><code class="language-lua"><span class="token keyword">local</span> Cashier <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span>path<span class="token punctuation">.</span>to<span class="token punctuation">.</span>Cashier<span class="token punctuation">)</span><span class="token punctuation">.</span>client
+
+<span class="token keyword">local</span> gamepasses <span class="token operator">=</span> Cashier<span class="token punctuation">:</span><span class="token function">getItemsOfType</span><span class="token punctuation">(</span><span class="token string">"Gamepass"</span><span class="token punctuation">)</span>
+
+<span class="token keyword">for</span> _<span class="token punctuation">,</span> item <span class="token keyword">in</span> gamepasses <span class="token keyword">do</span>
+	<span class="token function">print</span><span class="token punctuation">(</span>item<span class="token punctuation">.</span>name<span class="token punctuation">)</span>
+<span class="token keyword">end</span>
+</code></pre>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="getItemByName"><code style="text-decoration:none">getItemByName</code><a href="#getItemByName" class="hash-link" aria-label="Direct link to getItemByName" title="Direct link to getItemByName" translate="no">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/Yuzkkj/cashier/blob/main/src/CashierClient.luau#L266"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>CashierClient<!-- -->:</code><code class="green_DgR4">getItemByName</code><code>(</code><div class="inset_uKQm"><div><code>itemName<!-- -->: </code><code class="blue_P4bS">string</code><span class="inlineDescription_G7Er">-- <span>
+<p>The name of the item to retrieve</p>
+</span></span></div></div><code>) → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/cashier/api/CashierServer#Item">Item?</a></code><span class="inlineDescription_G7Er">-- <span>
+<p>The item with the specified name, or nil if not found</p>
+</span></span></div><div>
+<p>Retrieves a registered item by its name.</p>
+<pre class="language-lua"><code class="language-lua"><span class="token keyword">local</span> Cashier <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span>path<span class="token punctuation">.</span>to<span class="token punctuation">.</span>Cashier<span class="token punctuation">)</span><span class="token punctuation">.</span>client
+
+<span class="token keyword">local</span> item <span class="token operator">=</span> Cashier<span class="token punctuation">:</span><span class="token function">getItemByName</span><span class="token punctuation">(</span><span class="token string">"VIP"</span><span class="token punctuation">)</span>
+
+<span class="token keyword">if</span> item <span class="token keyword">then</span>
+	<span class="token function">print</span><span class="token punctuation">(</span><span class="token string">"Found item with ID:"</span><span class="token punctuation">,</span> item<span class="token punctuation">.</span>id<span class="token punctuation">)</span>
+<span class="token keyword">end</span>
+</code></pre>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="getItemById"><code style="text-decoration:none">getItemById</code><a href="#getItemById" class="hash-link" aria-label="Direct link to getItemById" title="Direct link to getItemById" translate="no">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/Yuzkkj/cashier/blob/main/src/CashierClient.luau#L296"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>CashierClient<!-- -->:</code><code class="green_DgR4">getItemById</code><code>(</code><div class="inset_uKQm"><div><code>itemId<!-- -->: </code><code class="blue_P4bS">number</code><span class="inlineDescription_G7Er">-- <span>
+<p>The ID of the item to retrieve</p>
+</span></span></div></div><code>) → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/cashier/api/CashierServer#Item">Item?</a></code><span class="inlineDescription_G7Er">-- <span>
+<p>The item with the specified ID, or nil if not found</p>
+</span></span></div><div>
+<p>Retrieves a registered item by its ID.</p>
+<pre class="language-lua"><code class="language-lua"><span class="token keyword">local</span> Cashier <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span>path<span class="token punctuation">.</span>to<span class="token punctuation">.</span>Cashier<span class="token punctuation">)</span><span class="token punctuation">.</span>client
+
+<span class="token keyword">local</span> item <span class="token operator">=</span> Cashier<span class="token punctuation">:</span><span class="token function">getItemById</span><span class="token punctuation">(</span><span class="token number">123456</span><span class="token punctuation">)</span>
+
+<span class="token keyword">if</span> item <span class="token keyword">then</span>
+	<span class="token function">print</span><span class="token punctuation">(</span><span class="token string">"Found item:"</span><span class="token punctuation">,</span> item<span class="token punctuation">.</span>name<span class="token punctuation">)</span>
+<span class="token keyword">end</span>
+</code></pre>
+
+  
+    
+    
+      <div class="admonition admonition-info alert alert--info">
+        <div class="admonition-heading">
+          <h5><span class="admonition-icon"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="16" viewBox="0 0 14 16">
+                <path d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path>
+              </svg></span><span class="admonition-title">INFO</span></h5>
+        </div>
+        <div class="admonition-content">
+          <p><code>itemId</code> can be a standard product/gamepass ID or a gift Developer Product ID.</p>
+        </div>
+      </div>
+    
+  
+
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="getItemPrice"><code style="text-decoration:none">getItemPrice</code><a href="#getItemPrice" class="hash-link" aria-label="Direct link to getItemPrice" title="Direct link to getItemPrice" translate="no">​</a></h3><span class="badge_Ba2I" style="color:#f1c40f"><span class="badgeTooltip_cWXP">This is a yielding function. When called, it will pause the Lua thread that called the function until a result is ready to be returned, without interrupting other scripts.</span><span class="badgeToolTipTail_H9D_"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="#f1c40f" role="img" aria-label="This is a yielding function. When called, it will pause the Lua thread that called the function until a result is ready to be returned, without interrupting other scripts."><path d="M96.4 11.9c-1.4-2.5-4-4-6.9-4H10.8c-2.9 0-5.4 1.5-6.9 4-1.4 2.5-1.4 5.5 0 7.9L43.3 88c1.4 2.5 4 4 6.9 4 2.9 0 5.4-1.5 6.9-4l39.3-68.2c1.4-2.4 1.4-5.4 0-7.9zM46.3 54.5c1.1-1.1 2.3-1.6 3.8-1.6s2.8.5 3.8 1.6c1.1 1.1 1.6 2.3 1.6 3.8s-.5 2.8-1.6 3.8c-1.1 1.1-2.3 1.6-3.8 1.6s-2.8-.5-3.8-1.6c-1.1-1.1-1.6-2.3-1.6-3.8.1-1.5.6-2.8 1.6-3.8zm-.5-4.9V21.8h8.8v27.8h-8.8z"></path></svg> <!-- -->Yields</span></span><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/Yuzkkj/cashier/blob/main/src/CashierClient.luau#L321"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>CashierClient<!-- -->:</code><code class="green_DgR4">getItemPrice</code><code>(</code><div class="inset_uKQm"><div><code>itemName<!-- -->: </code><code class="blue_P4bS">string</code><span class="inlineDescription_G7Er">-- <span>
+<p>The name of the item to get the price of</p>
+</span></span></div></div><code>) → </code><code class="blue_P4bS">number</code><span class="inlineDescription_G7Er">-- <span>
+<p>The price of the item in Robux, or 0 if unavailable</p>
+</span></span></div><div>
+<p>Retrieves the price of an item in Robux from MarketplaceService.</p>
+<pre class="language-lua"><code class="language-lua"><span class="token keyword">local</span> Cashier <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span>path<span class="token punctuation">.</span>to<span class="token punctuation">.</span>Cashier<span class="token punctuation">)</span><span class="token punctuation">.</span>client
+
+<span class="token keyword">local</span> price <span class="token operator">=</span> Cashier<span class="token punctuation">:</span><span class="token function">getItemPrice</span><span class="token punctuation">(</span><span class="token string">"VIP"</span><span class="token punctuation">)</span>
+
+<span class="token function">print</span><span class="token punctuation">(</span>`VIP <span class="token function">costs</span> <span class="token punctuation">{</span>price<span class="token punctuation">}</span> Robux`<span class="token punctuation">)</span>
+</code></pre>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="isGiftId"><code style="text-decoration:none">isGiftId</code><a href="#isGiftId" class="hash-link" aria-label="Direct link to isGiftId" title="Direct link to isGiftId" translate="no">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/Yuzkkj/cashier/blob/main/src/CashierClient.luau#L353"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>CashierClient<!-- -->:</code><code class="green_DgR4">isGiftId</code><code>(</code><div class="inset_uKQm"><div><code>itemId<!-- -->: </code><code class="blue_P4bS">number</code><span class="inlineDescription_G7Er">-- <span>
+<p>The ID to check</p>
+</span></span></div></div><code>) → </code><code class="blue_P4bS">boolean</code><span class="inlineDescription_G7Er">-- <span>
+<p>True if the ID is a registered gift product ID, false otherwise</p>
+</span></span></div><div>
+<p>Checks if an item ID is a registered gift Developer Product ID.</p>
+<pre class="language-lua"><code class="language-lua"><span class="token keyword">local</span> Cashier <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span>path<span class="token punctuation">.</span>to<span class="token punctuation">.</span>Cashier<span class="token punctuation">)</span><span class="token punctuation">.</span>client
+
+<span class="token keyword">local</span> id <span class="token operator">=</span> <span class="token number">123456</span>
+
+<span class="token function">print</span><span class="token punctuation">(</span>Cashier<span class="token punctuation">:</span><span class="token function">isGiftId</span><span class="token punctuation">(</span>id<span class="token punctuation">)</span><span class="token punctuation">)</span>
+</code></pre>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="has"><code style="text-decoration:none">has</code><a href="#has" class="hash-link" aria-label="Direct link to has" title="Direct link to has" translate="no">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/Yuzkkj/cashier/blob/main/src/CashierClient.luau#L377"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>CashierClient<!-- -->:</code><code class="green_DgR4">has</code><code>(</code><div class="inset_uKQm"><div><code>itemName<!-- -->: </code><code class="blue_P4bS">string</code><span class="inlineDescription_G7Er">-- <span>
+<p>The name of the item to check</p>
+</span></span></div></div><code>) → </code><code class="blue_P4bS">boolean</code><span class="inlineDescription_G7Er">-- <span>
+<p>True if the player owns the item, false otherwise</p>
+</span></span></div><div>
+<p>Checks if the local player owns a specific item.</p>
+<pre class="language-lua"><code class="language-lua"><span class="token keyword">local</span> Cashier <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span>path<span class="token punctuation">.</span>to<span class="token punctuation">.</span>Cashier<span class="token punctuation">)</span><span class="token punctuation">.</span>client
+
+<span class="token keyword">local</span> hasItem <span class="token operator">=</span> Cashier<span class="token punctuation">:</span><span class="token function">has</span><span class="token punctuation">(</span><span class="token string">"VIP"</span><span class="token punctuation">)</span>
+
+<span class="token keyword">if</span> hasItem <span class="token keyword">then</span>
+	<span class="token function">print</span><span class="token punctuation">(</span><span class="token string">"You own the VIP gamepass."</span><span class="token punctuation">)</span>
+<span class="token keyword">end</span>
+</code></pre>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="purchase"><code style="text-decoration:none">purchase</code><a href="#purchase" class="hash-link" aria-label="Direct link to purchase" title="Direct link to purchase" translate="no">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/Yuzkkj/cashier/blob/main/src/CashierClient.luau#L402"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>CashierClient<!-- -->:</code><code class="green_DgR4">purchase</code><code>(</code><div class="inset_uKQm"><div><code>itemName<!-- -->: </code><code class="blue_P4bS">string</code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+<p>The name of the item to purchase</p>
+</span></span></div><div><code>...<!-- -->: </code><code class="blue_P4bS">any?</code><span class="inlineDescription_G7Er">-- <span>
+<p>Optional additional arguments passed to the server predicate and callback</p>
+</span></span></div></div><code>) → </code><code>(</code><code>)</code></div><div>
+<p>Initiates a purchase prompt for the specified item.</p>
+<pre class="language-lua"><code class="language-lua"><span class="token keyword">local</span> Cashier <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span>path<span class="token punctuation">.</span>to<span class="token punctuation">.</span>Cashier<span class="token punctuation">)</span><span class="token punctuation">.</span>client
+<span class="token keyword">local</span> button <span class="token operator">=</span> script<span class="token punctuation">.</span>Parent
+
+button<span class="token punctuation">.</span>Activated<span class="token punctuation">:</span><span class="token function">Connect</span><span class="token punctuation">(</span><span class="token keyword">function</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+	Cashier<span class="token punctuation">:</span><span class="token function">purchase</span><span class="token punctuation">(</span><span class="token string">"VIP"</span><span class="token punctuation">)</span>
+<span class="token keyword">end</span><span class="token punctuation">)</span>
 </code></pre>
 
   
@@ -53,441 +174,366 @@ Cashier<span class="token punctuation">:</span><span class="token function">init
               </svg></span><span class="admonition-title">WARNING</span></h5>
         </div>
         <div class="admonition-content">
-          <p><code>:init(...)</code> should be called before using any other method.</p>
+          <p>This method should only be called on the client.</p>
         </div>
       </div>
     
   
 
-</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="getAllItems"><code style="text-decoration:none">getAllItems</code><a href="#getAllItems" class="hash-link" aria-label="Direct link to getAllItems" title="Direct link to getAllItems">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/Yuzkkj/cashier/blob/main/src/CashierClient.luau#L171"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>CashierClient<!-- -->:</code><code class="green_DgR4">getAllItems</code><code>(</code><code>) → </code><code class="purple_ieR2">{</code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/cashier/api/CashierServer#Item">Item</a></code><code class="purple_ieR2">}</code></div><div>
-<p>Returns an array with all registered items.</p>
-<pre class="language-lua"><code class="language-lua"><span class="token keyword">local</span> Cashier <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span>path<span class="token punctuation">.</span>to<span class="token punctuation">.</span>Cashier<span class="token punctuation">)</span><span class="token punctuation">.</span>client
-
-<span class="token keyword">for</span> _<span class="token punctuation">,</span> item <span class="token keyword">in</span> Cashier<span class="token punctuation">:</span><span class="token function">getAllItems</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">do</span>
-    <span class="token function">print</span><span class="token punctuation">(</span>item<span class="token punctuation">.</span>name<span class="token punctuation">,</span> item<span class="token punctuation">.</span>type<span class="token punctuation">)</span>
-<span class="token keyword">end</span>
-</code></pre>
-</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="getItemById"><code style="text-decoration:none">getItemById</code><a href="#getItemById" class="hash-link" aria-label="Direct link to getItemById" title="Direct link to getItemById">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/Yuzkkj/cashier/blob/main/src/CashierClient.luau#L197"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>CashierClient<!-- -->:</code><code class="green_DgR4">getItemById</code><code>(</code><code>itemId<!-- -->: </code><code class="blue_P4bS">number</code><code>) → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/cashier/api/CashierServer#Item">Item?</a></code></div><div>
-<p>
-  Retrieves the info of an item with the given id.
-  <code>itemId</code> can be either a normal id or a giftId.
-</p>
-<pre class="language-lua"><code class="language-lua"><span class="token keyword">local</span> Cashier <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span>path<span class="token punctuation">.</span>to<span class="token punctuation">.</span>Cashier<span class="token punctuation">)</span><span class="token punctuation">.</span>client
-
-<span class="token keyword">local</span> item <span class="token operator">=</span> Cashier<span class="token punctuation">:</span><span class="token function">getItemById</span><span class="token punctuation">(</span><span class="token number">1234</span><span class="token punctuation">)</span>
-<span class="token keyword">for</span> k<span class="token punctuation">,</span> v <span class="token keyword">in</span> item <span class="token keyword">do</span>
-    <span class="token function">print</span><span class="token punctuation">(</span>k<span class="token punctuation">,</span> v<span class="token punctuation">)</span>
-<span class="token keyword">end</span>
-</code></pre>
-</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="getItemByName"><code style="text-decoration:none">getItemByName</code><a href="#getItemByName" class="hash-link" aria-label="Direct link to getItemByName" title="Direct link to getItemByName">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/Yuzkkj/cashier/blob/main/src/CashierClient.luau#L223"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>CashierClient<!-- -->:</code><code class="green_DgR4">getItemByName</code><code>(</code><code>itemName<!-- -->: </code><code class="blue_P4bS">string</code><code>) → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/cashier/api/CashierServer#Item">Item?</a></code></div><div>
-<p>Retrieves the info of an item with the given name.</p>
-<pre class="language-lua"><code class="language-lua"><span class="token keyword">local</span> Cashier <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span>path<span class="token punctuation">.</span>to<span class="token punctuation">.</span>Cashier<span class="token punctuation">)</span><span class="token punctuation">.</span>client
-
-<span class="token keyword">local</span> item <span class="token operator">=</span> Cashier<span class="token punctuation">:</span><span class="token function">getItemByName</span><span class="token punctuation">(</span><span class="token string">"VIP"</span><span class="token punctuation">)</span>
-<span class="token keyword">for</span> k<span class="token punctuation">,</span> v <span class="token keyword">in</span> item <span class="token keyword">do</span>
-    <span class="token function">print</span><span class="token punctuation">(</span>k<span class="token punctuation">,</span> v<span class="token punctuation">)</span>
-<span class="token keyword">end</span>
-</code></pre>
-</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="getItemsOfType"><code style="text-decoration:none">getItemsOfType</code><a href="#getItemsOfType" class="hash-link" aria-label="Direct link to getItemsOfType" title="Direct link to getItemsOfType">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/Yuzkkj/cashier/blob/main/src/CashierClient.luau#L248"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>CashierClient<!-- -->:</code><code class="green_DgR4">getItemsOfType</code><code>(</code><code>itemType<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/cashier/api/CashierServer#ItemType">ItemType</a></code><code>) → </code><code class="purple_ieR2">{</code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/cashier/api/CashierServer#Item">Item</a></code><code class="purple_ieR2">}</code></div><div>
-<p>Returns an array with all items of the given type.</p>
-<pre class="language-lua"><code class="language-lua"><span class="token keyword">local</span> Cashier <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span>path<span class="token punctuation">.</span>to<span class="token punctuation">.</span>Cashier<span class="token punctuation">)</span><span class="token punctuation">.</span>client
-
-<span class="token keyword">for</span> _<span class="token punctuation">,</span> item <span class="token keyword">in</span> Cashier<span class="token punctuation">:</span><span class="token function">getItemsOfType</span><span class="token punctuation">(</span><span class="token string">"Gamepass"</span><span class="token punctuation">)</span> <span class="token keyword">do</span>
-	<span class="token function">print</span><span class="token punctuation">(</span>item<span class="token punctuation">.</span>name<span class="token punctuation">,</span> item<span class="token punctuation">.</span>id<span class="token punctuation">)</span>
-<span class="token keyword">end</span>
-</code></pre>
-</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="isGiftId"><code style="text-decoration:none">isGiftId</code><a href="#isGiftId" class="hash-link" aria-label="Direct link to isGiftId" title="Direct link to isGiftId">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/Yuzkkj/cashier/blob/main/src/CashierClient.luau#L270"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>CashierClient<!-- -->:</code><code class="green_DgR4">isGiftId</code><code>(</code><code>id<!-- -->: </code><code class="blue_P4bS">number</code><code>) → </code><code class="blue_P4bS">boolean</code></div><div>
-<p>Checks if an id is the <code>giftId</code> of an item.</p>
-<pre class="language-lua"><code class="language-lua"><span class="token keyword">local</span> Cashier <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span>path<span class="token punctuation">.</span>to<span class="token punctuation">.</span>Cashier<span class="token punctuation">)</span><span class="token punctuation">.</span>client
-
-<span class="token keyword">local</span> isGiftId <span class="token operator">=</span> Cashier<span class="token punctuation">:</span><span class="token function">isGiftId</span><span class="token punctuation">(</span><span class="token number">4321</span><span class="token punctuation">)</span>
-<span class="token function">print</span><span class="token punctuation">(</span>isGiftId<span class="token punctuation">)</span>
-</code></pre>
-</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="getItemPrice"><code style="text-decoration:none">getItemPrice</code><a href="#getItemPrice" class="hash-link" aria-label="Direct link to getItemPrice" title="Direct link to getItemPrice">​</a></h3><span class="badge_Ba2I" style="color:#f1c40f"><span class="badgeTooltip_cWXP">This is a yielding function. When called, it will pause the Lua thread that called the function until a result is ready to be returned, without interrupting other scripts.</span><span class="badgeToolTipTail_H9D_"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="#f1c40f" role="img" aria-label="This is a yielding function. When called, it will pause the Lua thread that called the function until a result is ready to be returned, without interrupting other scripts."><path d="M96.4 11.9c-1.4-2.5-4-4-6.9-4H10.8c-2.9 0-5.4 1.5-6.9 4-1.4 2.5-1.4 5.5 0 7.9L43.3 88c1.4 2.5 4 4 6.9 4 2.9 0 5.4-1.5 6.9-4l39.3-68.2c1.4-2.4 1.4-5.4 0-7.9zM46.3 54.5c1.1-1.1 2.3-1.6 3.8-1.6s2.8.5 3.8 1.6c1.1 1.1 1.6 2.3 1.6 3.8s-.5 2.8-1.6 3.8c-1.1 1.1-2.3 1.6-3.8 1.6s-2.8-.5-3.8-1.6c-1.1-1.1-1.6-2.3-1.6-3.8.1-1.5.6-2.8 1.6-3.8zm-.5-4.9V21.8h8.8v27.8h-8.8z"></path></svg> <!-- -->Yields</span></span><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/Yuzkkj/cashier/blob/main/src/CashierClient.luau#L297"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>CashierClient<!-- -->:</code><code class="green_DgR4">getItemPrice</code><code>(</code><code>itemName<!-- -->: </code><code class="blue_P4bS">string</code><code>) → </code><code class="blue_P4bS">number</code></div><div>
-<p>Returns the price in robux of an item.</p>
-<pre class="language-lua"><code class="language-lua"><span class="token keyword">local</span> Cashier <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span>path<span class="token punctuation">.</span>to<span class="token punctuation">.</span>Cashier<span class="token punctuation">)</span><span class="token punctuation">.</span>client
-
-<span class="token keyword">local</span> priceLabel <span class="token operator">=</span> script<span class="token punctuation">.</span>Parent
-
-<span class="token keyword">local</span> price <span class="token operator">=</span> Cashier<span class="token punctuation">:</span><span class="token function">getItemPrice</span><span class="token punctuation">(</span><span class="token string">"VIP"</span><span class="token punctuation">)</span>
-priceLabel<span class="token punctuation">.</span>Text <span class="token operator">=</span> `$<span class="token punctuation">{</span>price<span class="token punctuation">}</span>`
-</code></pre>
-</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="hasItem"><code style="text-decoration:none">hasItem</code><a href="#hasItem" class="hash-link" aria-label="Direct link to hasItem" title="Direct link to hasItem">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/Yuzkkj/cashier/blob/main/src/CashierClient.luau#L332"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>CashierClient<!-- -->:</code><code class="green_DgR4">hasItem</code><code>(</code><code>itemName<!-- -->: </code><code class="blue_P4bS">string</code><code>) → </code><code class="blue_P4bS">boolean</code></div><div>
-<p>Checks if the user has the item with the given name.</p>
-<pre class="language-lua"><code class="language-lua"><span class="token keyword">local</span> Cashier <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span>path<span class="token punctuation">.</span>to<span class="token punctuation">.</span>Cashier<span class="token punctuation">)</span><span class="token punctuation">.</span>client
-
-<span class="token keyword">local</span> textLabel <span class="token operator">=</span> script<span class="token punctuation">.</span>Parent
-
-<span class="token keyword">local</span> hasItem <span class="token operator">=</span> Cashier<span class="token punctuation">:</span><span class="token function">hasItem</span><span class="token punctuation">(</span><span class="token string">"VIP"</span><span class="token punctuation">)</span>
-<span class="token keyword">if</span> hasItem <span class="token keyword">then</span>
-    textLabel<span class="token punctuation">.</span>Text <span class="token operator">=</span> <span class="token string">"Owned"</span>
-<span class="token keyword">end</span>
-</code></pre>
-</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="purchaseItem"><code style="text-decoration:none">purchaseItem</code><a href="#purchaseItem" class="hash-link" aria-label="Direct link to purchaseItem" title="Direct link to purchaseItem">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/Yuzkkj/cashier/blob/main/src/CashierClient.luau#L363"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>CashierClient<!-- -->:</code><code class="green_DgR4">purchaseItem</code><code>(</code><div class="inset_uKQm"><div><code>itemName<!-- -->: </code><code class="blue_P4bS">string</code><code>,</code></div><div><code>...<!-- -->: </code><code class="blue_P4bS">any?</code><span class="inlineDescription_G7Er">-- <span>
-<p>Extra params passed to the item's predicate</p>
-</span></span></div></div><code>) → </code><code>(</code><code>)</code></div><div>
-<p>Prompts the local player to purchase the item with the given name.</p>
-<pre class="language-lua"><code class="language-lua"><span class="token keyword">local</span> Cashier <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span>path<span class="token punctuation">.</span>to<span class="token punctuation">.</span>Cashier<span class="token punctuation">)</span><span class="token punctuation">.</span>client
-
-<span class="token keyword">local</span> button <span class="token operator">=</span> script<span class="token punctuation">.</span>Parent
-button<span class="token punctuation">.</span>Activated<span class="token punctuation">:</span><span class="token function">Connect</span><span class="token punctuation">(</span><span class="token keyword">function</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-    Cashier<span class="token punctuation">:</span><span class="token function">purchaseItem</span><span class="token punctuation">(</span><span class="token string">"VIP"</span><span class="token punctuation">)</span>
-<span class="token keyword">end</span><span class="token punctuation">)</span>
-</code></pre>
-</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="gift"><code style="text-decoration:none">gift</code><a href="#gift" class="hash-link" aria-label="Direct link to gift" title="Direct link to gift">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/Yuzkkj/cashier/blob/main/src/CashierClient.luau#L390"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>CashierClient<!-- -->:</code><code class="green_DgR4">gift</code><code>(</code><div class="inset_uKQm"><div><code>userId<!-- -->: </code><code class="blue_P4bS">number</code><code>,</code></div><div><code>itemName<!-- -->: </code><code class="blue_P4bS">string</code></div></div><code>) → </code><code>(</code><div class="inset_uKQm"><div><code class="blue_P4bS">boolean</code><code>,</code><span class="inlineDescription_G7Er">-- <span>
-<p>Whether the gift was successfully initiated</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="gift"><code style="text-decoration:none">gift</code><a href="#gift" class="hash-link" aria-label="Direct link to gift" title="Direct link to gift" translate="no">​</a></h3><span class="badge_Ba2I" style="color:#f1c40f"><span class="badgeTooltip_cWXP">This is a yielding function. When called, it will pause the Lua thread that called the function until a result is ready to be returned, without interrupting other scripts.</span><span class="badgeToolTipTail_H9D_"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="#f1c40f" role="img" aria-label="This is a yielding function. When called, it will pause the Lua thread that called the function until a result is ready to be returned, without interrupting other scripts."><path d="M96.4 11.9c-1.4-2.5-4-4-6.9-4H10.8c-2.9 0-5.4 1.5-6.9 4-1.4 2.5-1.4 5.5 0 7.9L43.3 88c1.4 2.5 4 4 6.9 4 2.9 0 5.4-1.5 6.9-4l39.3-68.2c1.4-2.4 1.4-5.4 0-7.9zM46.3 54.5c1.1-1.1 2.3-1.6 3.8-1.6s2.8.5 3.8 1.6c1.1 1.1 1.6 2.3 1.6 3.8s-.5 2.8-1.6 3.8c-1.1 1.1-2.3 1.6-3.8 1.6s-2.8-.5-3.8-1.6c-1.1-1.1-1.6-2.3-1.6-3.8.1-1.5.6-2.8 1.6-3.8zm-.5-4.9V21.8h8.8v27.8h-8.8z"></path></svg> <!-- -->Yields</span></span><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/Yuzkkj/cashier/blob/main/src/CashierClient.luau#L431"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>CashierClient<!-- -->:</code><code class="green_DgR4">gift</code><code>(</code><div class="inset_uKQm"><div><code>recipientId<!-- -->: </code><code class="blue_P4bS">number</code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+<p>The UserId of the player to gift the item to</p>
+</span></span></div><div><code>itemName<!-- -->: </code><code class="blue_P4bS">string</code><span class="inlineDescription_G7Er">-- <span>
+<p>The name of the item to gift</p>
+</span></span></div></div><code>) → </code><code>(</code><div class="inset_uKQm"><div><code class="blue_P4bS">boolean</code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+<p>True if the gift was successfully initiated or delivered, false otherwise</p>
 </span></span></div><div><code class="blue_P4bS">string?</code><span class="inlineDescription_G7Er">-- <span>
-<p>An error message in case the user could not gift the other one</p>
+<p>An error message if the gift request failed</p>
 </span></span></div></div><code>)</code></div><div>
-<p>Prompts the user to purchase the item for the other player.</p>
+<p>Sends a gift to another user by their UserId.</p>
 <pre class="language-lua"><code class="language-lua"><span class="token keyword">local</span> Cashier <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span>path<span class="token punctuation">.</span>to<span class="token punctuation">.</span>Cashier<span class="token punctuation">)</span><span class="token punctuation">.</span>client
 
-<span class="token keyword">local</span> giftButton <span class="token operator">=</span> script<span class="token punctuation">.</span>Parent
-giftButton<span class="token punctuation">.</span>Activated<span class="token punctuation">:</span><span class="token function">Connect</span><span class="token punctuation">(</span><span class="token keyword">function</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-    Cashier<span class="token punctuation">:</span><span class="token function">gift</span><span class="token punctuation">(</span><span class="token number">6969</span><span class="token punctuation">,</span> <span class="token string">"VIP"</span><span class="token punctuation">)</span>
-<span class="token keyword">end</span><span class="token punctuation">)</span>
+<span class="token keyword">local</span> success<span class="token punctuation">,</span> errMsg <span class="token operator">=</span> Cashier<span class="token punctuation">:</span><span class="token function">gift</span><span class="token punctuation">(</span><span class="token number">123456</span><span class="token punctuation">,</span> <span class="token string">"VIP"</span><span class="token punctuation">)</span>
+
+<span class="token keyword">if</span> <span class="token keyword">not</span> success <span class="token keyword">then</span>
+	<span class="token function">warn</span><span class="token punctuation">(</span><span class="token string">"Gifting failed:"</span><span class="token punctuation">,</span> errMsg<span class="token punctuation">)</span>
+<span class="token keyword">end</span>
 </code></pre>
-</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="onGiftReceived"><code style="text-decoration:none">onGiftReceived</code><a href="#onGiftReceived" class="hash-link" aria-label="Direct link to onGiftReceived" title="Direct link to onGiftReceived">​</a></h3><span class="docTag__6UZ" style="border-color:#00a1e4;color:#00a1e4">Override</span><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/Yuzkkj/cashier/blob/main/src/CashierClient.luau#L414"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>CashierClient<!-- -->:</code><code class="green_DgR4">onGiftReceived</code><code>(</code><code>giftData<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/cashier/api/CashierServer#GiftData">GiftData</a></code><code>) → </code><code>(</code><code>)</code></div><div>
-<p>Overridable method called when the user receives a gift.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="onGiftReceived"><code style="text-decoration:none">onGiftReceived</code><a href="#onGiftReceived" class="hash-link" aria-label="Direct link to onGiftReceived" title="Direct link to onGiftReceived" translate="no">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/Yuzkkj/cashier/blob/main/src/CashierClient.luau#L454"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>CashierClient<!-- -->:</code><code class="green_DgR4">onGiftReceived</code><code>(</code><div class="inset_uKQm"><div><code>giftData<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/cashier/api/CashierServer#GiftData">GiftData</a></code><span class="inlineDescription_G7Er">-- <span>
+<p>Information about the received gift</p>
+</span></span></div></div><code>) → </code><code>(</code><code>)</code></div><h3>Types</h3><h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="GiftData"><a href="#GiftData" class="hash-link" aria-label="Direct link to GiftData" title="Direct link to GiftData" translate="no">​</a></h3><div class="memberString_GwaU"><code class="purple_ieR2">interface</code> <code>GiftData<!-- --> <!-- -->{</code><div class="inset_uKQm"><div><code>item<!-- -->: </code><code class="blue_P4bS">string</code><span class="inlineDescription_G7Er">-- <span>
+<p>The name of the gifted item</p>
+</span></span></div><div><code>from<!-- -->: </code><code class="blue_P4bS">number</code><span class="inlineDescription_G7Er">-- <span>
+<p>The UserId of the player who sent the gift</p>
+</span></span></div></div><code>}</code></div><div></div><div>
+<p>An overridable callback invoked when the local player receives a gift. Can be overridden to display custom UI or notifications.</p>
 <pre class="language-lua"><code class="language-lua"><span class="token keyword">local</span> Cashier <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span>path<span class="token punctuation">.</span>to<span class="token punctuation">.</span>Cashier<span class="token punctuation">)</span><span class="token punctuation">.</span>client
 
-<span class="token keyword">function</span> Cashier<span class="token punctuation">:</span><span class="token function">onGiftReceived</span><span class="token punctuation">(</span>giftData<span class="token punctuation">:</span> GiftData<span class="token punctuation">)</span>
-    <span class="token function">print</span><span class="token punctuation">(</span>`<span class="token punctuation">{</span>giftData<span class="token punctuation">.</span>from<span class="token punctuation">}</span> gifted <span class="token function">you</span> <span class="token punctuation">{</span>giftData<span class="token punctuation">.</span>item<span class="token punctuation">}</span>!`<span class="token punctuation">)</span>
+<span class="token keyword">function</span> Cashier<span class="token punctuation">:</span><span class="token function">onGiftReceived</span><span class="token punctuation">(</span>giftData<span class="token punctuation">)</span>
+	<span class="token function">print</span><span class="token punctuation">(</span>`You <span class="token function">received</span> <span class="token punctuation">{</span>giftData<span class="token punctuation">.</span>item<span class="token punctuation">}</span> from <span class="token function">UserId</span> <span class="token punctuation">{</span>giftData<span class="token punctuation">.</span>from<span class="token punctuation">}</span><span class="token punctuation">.</span>`<span class="token punctuation">)</span>
 <span class="token keyword">end</span>
 </code></pre>
 </div></div></article></div><details><summary>Show raw api</summary><pre style="max-width:100%;white-space:pre-wrap">{
     &quot;functions&quot;: [
         {
             &quot;name&quot;: &quot;init&quot;,
-            &quot;desc&quot;: &quot;Initializes the client-side of Cashier.\n\n```lua\nlocal Cashier = require(path.to.Cashier).client\n\nCashier:init()\n```\n\n:::warning\n`:init(...)` should be called before using any other method.\n:::&quot;,
+            &quot;desc&quot;: &quot;Initializes the client-side of Cashier and begins listening for network replication from the server.\n\n```lua\nlocal Cashier = require(path.to.Cashier).client\n\nCashier:init()\n```&quot;,
             &quot;params&quot;: [],
             &quot;returns&quot;: [],
             &quot;function_type&quot;: &quot;method&quot;,
             &quot;source&quot;: {
-                &quot;line&quot;: 81,
+                &quot;line&quot;: 101,
+                &quot;path&quot;: &quot;src/CashierClient.luau&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;getUnsentItems&quot;,
+            &quot;desc&quot;: &quot;Fetches the list of unsent gifts owned by the local player that were not delivered (e.g. due to delivery failure).\n\n```lua\nlocal Cashier = require(path.to.Cashier).client\n\nlocal unsentItems = Cashier:getUnsentItems()\n\nfor itemName, amount in unsentItems do\n\tprint(`You have {amount} unsent {itemName}(s).`)\nend\n```&quot;,
+            &quot;params&quot;: [],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;A dictionary mapping item names to unsent gift counts&quot;,
+                    &quot;lua_type&quot;: &quot;{ [string]: number }&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;yields&quot;: true,
+            &quot;source&quot;: {
+                &quot;line&quot;: 199,
                 &quot;path&quot;: &quot;src/CashierClient.luau&quot;
             }
         },
         {
             &quot;name&quot;: &quot;getAllItems&quot;,
-            &quot;desc&quot;: &quot;Returns an array with all registered items.\n\n```lua\nlocal Cashier = require(path.to.Cashier).client\n\nfor _, item in Cashier:getAllItems() do\n    print(item.name, item.type)\nend\n```&quot;,
+            &quot;desc&quot;: &quot;Returns an array of all registered items.\n\n```lua\nlocal Cashier = require(path.to.Cashier).client\n\nlocal items = Cashier:getAllItems()\n\nfor _, item in items do\n\tprint(item.name, item.type)\nend\n```&quot;,
             &quot;params&quot;: [],
             &quot;returns&quot;: [
                 {
-                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;desc&quot;: &quot;An array containing all registered items&quot;,
                     &quot;lua_type&quot;: &quot;{ Item }&quot;
                 }
             ],
             &quot;function_type&quot;: &quot;method&quot;,
             &quot;source&quot;: {
-                &quot;line&quot;: 171,
-                &quot;path&quot;: &quot;src/CashierClient.luau&quot;
-            }
-        },
-        {
-            &quot;name&quot;: &quot;getItemById&quot;,
-            &quot;desc&quot;: &quot;Retrieves the info of an item with the given id.\n`itemId` can be either a normal id or a giftId.\n\n```lua\nlocal Cashier = require(path.to.Cashier).client\n\nlocal item = Cashier:getItemById(1234)\nfor k, v in item do\n    print(k, v)\nend\n```&quot;,
-            &quot;params&quot;: [
-                {
-                    &quot;name&quot;: &quot;itemId&quot;,
-                    &quot;desc&quot;: &quot;&quot;,
-                    &quot;lua_type&quot;: &quot;number&quot;
-                }
-            ],
-            &quot;returns&quot;: [
-                {
-                    &quot;desc&quot;: &quot;&quot;,
-                    &quot;lua_type&quot;: &quot;Item?&quot;
-                }
-            ],
-            &quot;function_type&quot;: &quot;method&quot;,
-            &quot;source&quot;: {
-                &quot;line&quot;: 197,
-                &quot;path&quot;: &quot;src/CashierClient.luau&quot;
-            }
-        },
-        {
-            &quot;name&quot;: &quot;getItemByName&quot;,
-            &quot;desc&quot;: &quot;Retrieves the info of an item with the given name.\n\n```lua\nlocal Cashier = require(path.to.Cashier).client\n\nlocal item = Cashier:getItemByName(\&quot;VIP\&quot;)\nfor k, v in item do\n    print(k, v)\nend\n```&quot;,
-            &quot;params&quot;: [
-                {
-                    &quot;name&quot;: &quot;itemName&quot;,
-                    &quot;desc&quot;: &quot;&quot;,
-                    &quot;lua_type&quot;: &quot;string&quot;
-                }
-            ],
-            &quot;returns&quot;: [
-                {
-                    &quot;desc&quot;: &quot;&quot;,
-                    &quot;lua_type&quot;: &quot;Item?&quot;
-                }
-            ],
-            &quot;function_type&quot;: &quot;method&quot;,
-            &quot;source&quot;: {
-                &quot;line&quot;: 223,
+                &quot;line&quot;: 220,
                 &quot;path&quot;: &quot;src/CashierClient.luau&quot;
             }
         },
         {
             &quot;name&quot;: &quot;getItemsOfType&quot;,
-            &quot;desc&quot;: &quot;Returns an array with all items of the given type.\n\n```lua\nlocal Cashier = require(path.to.Cashier).client\n\nfor _, item in Cashier:getItemsOfType(\&quot;Gamepass\&quot;) do\n\tprint(item.name, item.id)\nend\n```&quot;,
+            &quot;desc&quot;: &quot;Retrieves all registered items of a specific type.\n\n```lua\nlocal Cashier = require(path.to.Cashier).client\n\nlocal gamepasses = Cashier:getItemsOfType(\&quot;Gamepass\&quot;)\n\nfor _, item in gamepasses do\n\tprint(item.name)\nend\n```&quot;,
             &quot;params&quot;: [
                 {
                     &quot;name&quot;: &quot;itemType&quot;,
-                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;desc&quot;: &quot;The type of items to retrieve (\&quot;DevProduct\&quot; | \&quot;Gamepass\&quot; | \&quot;Semipass\&quot;)&quot;,
                     &quot;lua_type&quot;: &quot;ItemType&quot;
                 }
             ],
             &quot;returns&quot;: [
                 {
-                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;desc&quot;: &quot;An array containing items of the specified type&quot;,
                     &quot;lua_type&quot;: &quot;{ Item }&quot;
                 }
             ],
             &quot;function_type&quot;: &quot;method&quot;,
             &quot;source&quot;: {
-                &quot;line&quot;: 248,
+                &quot;line&quot;: 242,
                 &quot;path&quot;: &quot;src/CashierClient.luau&quot;
             }
         },
         {
-            &quot;name&quot;: &quot;isGiftId&quot;,
-            &quot;desc&quot;: &quot;Checks if an id is the `giftId` of an item.\n\n```lua\nlocal Cashier = require(path.to.Cashier).client\n\nlocal isGiftId = Cashier:isGiftId(4321)\nprint(isGiftId)\n```&quot;,
-            &quot;params&quot;: [
-                {
-                    &quot;name&quot;: &quot;id&quot;,
-                    &quot;desc&quot;: &quot;&quot;,
-                    &quot;lua_type&quot;: &quot;number&quot;
-                }
-            ],
-            &quot;returns&quot;: [
-                {
-                    &quot;desc&quot;: &quot;&quot;,
-                    &quot;lua_type&quot;: &quot;boolean&quot;
-                }
-            ],
-            &quot;function_type&quot;: &quot;method&quot;,
-            &quot;source&quot;: {
-                &quot;line&quot;: 270,
-                &quot;path&quot;: &quot;src/CashierClient.luau&quot;
-            }
-        },
-        {
-            &quot;name&quot;: &quot;getItemPrice&quot;,
-            &quot;desc&quot;: &quot;Returns the price in robux of an item.\n\n```lua\nlocal Cashier = require(path.to.Cashier).client\n\nlocal priceLabel = script.Parent\n\nlocal price = Cashier:getItemPrice(\&quot;VIP\&quot;)\npriceLabel.Text = `${price}`\n```&quot;,
+            &quot;name&quot;: &quot;getItemByName&quot;,
+            &quot;desc&quot;: &quot; \n\nRetrieves a registered item by its name.\n\n```lua\nlocal Cashier = require(path.to.Cashier).client\n\nlocal item = Cashier:getItemByName(\&quot;VIP\&quot;)\n\nif item then\n\tprint(\&quot;Found item with ID:\&quot;, item.id)\nend\n```&quot;,
             &quot;params&quot;: [
                 {
                     &quot;name&quot;: &quot;itemName&quot;,
-                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;desc&quot;: &quot;The name of the item to retrieve&quot;,
                     &quot;lua_type&quot;: &quot;string&quot;
                 }
             ],
             &quot;returns&quot;: [
                 {
-                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;desc&quot;: &quot;The item with the specified name, or nil if not found&quot;,
+                    &quot;lua_type&quot;: &quot;Item?&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 266,
+                &quot;path&quot;: &quot;src/CashierClient.luau&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;getItemById&quot;,
+            &quot;desc&quot;: &quot; \n\nRetrieves a registered item by its ID.\n\n```lua\nlocal Cashier = require(path.to.Cashier).client\n\nlocal item = Cashier:getItemById(123456)\n\nif item then\n\tprint(\&quot;Found item:\&quot;, item.name)\nend\n```\n\n:::info\n`itemId` can be a standard product/gamepass ID or a gift Developer Product ID.\n:::&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;itemId&quot;,
+                    &quot;desc&quot;: &quot;The ID of the item to retrieve&quot;,
+                    &quot;lua_type&quot;: &quot;number&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;The item with the specified ID, or nil if not found&quot;,
+                    &quot;lua_type&quot;: &quot;Item?&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 296,
+                &quot;path&quot;: &quot;src/CashierClient.luau&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;getItemPrice&quot;,
+            &quot;desc&quot;: &quot; \n\nRetrieves the price of an item in Robux from MarketplaceService.\n\n```lua\nlocal Cashier = require(path.to.Cashier).client\n\nlocal price = Cashier:getItemPrice(\&quot;VIP\&quot;)\n\nprint(`VIP costs {price} Robux`)\n```&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;itemName&quot;,
+                    &quot;desc&quot;: &quot;The name of the item to get the price of&quot;,
+                    &quot;lua_type&quot;: &quot;string&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;The price of the item in Robux, or 0 if unavailable&quot;,
                     &quot;lua_type&quot;: &quot;number&quot;
                 }
             ],
             &quot;function_type&quot;: &quot;method&quot;,
             &quot;yields&quot;: true,
             &quot;source&quot;: {
-                &quot;line&quot;: 297,
+                &quot;line&quot;: 321,
                 &quot;path&quot;: &quot;src/CashierClient.luau&quot;
             }
         },
         {
-            &quot;name&quot;: &quot;hasItem&quot;,
-            &quot;desc&quot;: &quot;Checks if the user has the item with the given name.\n\n```lua\nlocal Cashier = require(path.to.Cashier).client\n\nlocal textLabel = script.Parent\n\nlocal hasItem = Cashier:hasItem(\&quot;VIP\&quot;)\nif hasItem then\n    textLabel.Text = \&quot;Owned\&quot;\nend\n```&quot;,
+            &quot;name&quot;: &quot;isGiftId&quot;,
+            &quot;desc&quot;: &quot; \n\nChecks if an item ID is a registered gift Developer Product ID.\n\n```lua\nlocal Cashier = require(path.to.Cashier).client\n\nlocal id = 123456\n\nprint(Cashier:isGiftId(id))\n```&quot;,
             &quot;params&quot;: [
                 {
-                    &quot;name&quot;: &quot;itemName&quot;,
-                    &quot;desc&quot;: &quot;&quot;,
-                    &quot;lua_type&quot;: &quot;string&quot;
+                    &quot;name&quot;: &quot;itemId&quot;,
+                    &quot;desc&quot;: &quot;The ID to check&quot;,
+                    &quot;lua_type&quot;: &quot;number&quot;
                 }
             ],
             &quot;returns&quot;: [
                 {
-                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;desc&quot;: &quot;True if the ID is a registered gift product ID, false otherwise&quot;,
                     &quot;lua_type&quot;: &quot;boolean&quot;
                 }
             ],
             &quot;function_type&quot;: &quot;method&quot;,
             &quot;source&quot;: {
-                &quot;line&quot;: 332,
+                &quot;line&quot;: 353,
                 &quot;path&quot;: &quot;src/CashierClient.luau&quot;
             }
         },
         {
-            &quot;name&quot;: &quot;purchaseItem&quot;,
-            &quot;desc&quot;: &quot;Prompts the local player to purchase the item with the given name.\n\n```lua\nlocal Cashier = require(path.to.Cashier).client\n\nlocal button = script.Parent\nbutton.Activated:Connect(function()\n    Cashier:purchaseItem(\&quot;VIP\&quot;)\nend)\n```&quot;,
+            &quot;name&quot;: &quot;has&quot;,
+            &quot;desc&quot;: &quot; \n\nChecks if the local player owns a specific item.\n\n```lua\nlocal Cashier = require(path.to.Cashier).client\n\nlocal hasItem = Cashier:has(\&quot;VIP\&quot;)\n\nif hasItem then\n\tprint(\&quot;You own the VIP gamepass.\&quot;)\nend\n```&quot;,
             &quot;params&quot;: [
                 {
                     &quot;name&quot;: &quot;itemName&quot;,
-                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;desc&quot;: &quot;The name of the item to check&quot;,
+                    &quot;lua_type&quot;: &quot;string&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;True if the player owns the item, false otherwise&quot;,
+                    &quot;lua_type&quot;: &quot;boolean&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 377,
+                &quot;path&quot;: &quot;src/CashierClient.luau&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;purchase&quot;,
+            &quot;desc&quot;: &quot; \n\nInitiates a purchase prompt for the specified item.\n\n```lua\nlocal Cashier = require(path.to.Cashier).client\nlocal button = script.Parent\n\nbutton.Activated:Connect(function()\n\tCashier:purchase(\&quot;VIP\&quot;)\nend)\n```\n\n:::warning\nThis method should only be called on the client.\n:::&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;itemName&quot;,
+                    &quot;desc&quot;: &quot;The name of the item to purchase&quot;,
                     &quot;lua_type&quot;: &quot;string&quot;
                 },
                 {
                     &quot;name&quot;: &quot;...&quot;,
-                    &quot;desc&quot;: &quot;Extra params passed to the item&#x27;s predicate&quot;,
+                    &quot;desc&quot;: &quot;Optional additional arguments passed to the server predicate and callback&quot;,
                     &quot;lua_type&quot;: &quot;any?&quot;
                 }
             ],
             &quot;returns&quot;: [],
             &quot;function_type&quot;: &quot;method&quot;,
             &quot;source&quot;: {
-                &quot;line&quot;: 363,
+                &quot;line&quot;: 402,
                 &quot;path&quot;: &quot;src/CashierClient.luau&quot;
             }
         },
         {
             &quot;name&quot;: &quot;gift&quot;,
-            &quot;desc&quot;: &quot;Prompts the user to purchase the item for the other player.\n\n```lua\nlocal Cashier = require(path.to.Cashier).client\n\nlocal giftButton = script.Parent\ngiftButton.Activated:Connect(function()\n    Cashier:gift(6969, \&quot;VIP\&quot;)\nend)\n```&quot;,
+            &quot;desc&quot;: &quot; \n\nSends a gift to another user by their UserId.\n\n```lua\nlocal Cashier = require(path.to.Cashier).client\n\nlocal success, errMsg = Cashier:gift(123456, \&quot;VIP\&quot;)\n\nif not success then\n\twarn(\&quot;Gifting failed:\&quot;, errMsg)\nend\n```&quot;,
             &quot;params&quot;: [
                 {
-                    &quot;name&quot;: &quot;userId&quot;,
-                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;name&quot;: &quot;recipientId&quot;,
+                    &quot;desc&quot;: &quot;The UserId of the player to gift the item to&quot;,
                     &quot;lua_type&quot;: &quot;number&quot;
                 },
                 {
                     &quot;name&quot;: &quot;itemName&quot;,
-                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;desc&quot;: &quot;The name of the item to gift&quot;,
                     &quot;lua_type&quot;: &quot;string&quot;
                 }
             ],
             &quot;returns&quot;: [
                 {
-                    &quot;desc&quot;: &quot;Whether the gift was successfully initiated&quot;,
+                    &quot;desc&quot;: &quot;True if the gift was successfully initiated or delivered, false otherwise&quot;,
                     &quot;lua_type&quot;: &quot;boolean&quot;
                 },
                 {
-                    &quot;desc&quot;: &quot;An error message in case the user could not gift the other one&quot;,
+                    &quot;desc&quot;: &quot;An error message if the gift request failed&quot;,
                     &quot;lua_type&quot;: &quot;string?&quot;
                 }
             ],
             &quot;function_type&quot;: &quot;method&quot;,
+            &quot;yields&quot;: true,
             &quot;source&quot;: {
-                &quot;line&quot;: 390,
+                &quot;line&quot;: 431,
                 &quot;path&quot;: &quot;src/CashierClient.luau&quot;
             }
         },
         {
             &quot;name&quot;: &quot;onGiftReceived&quot;,
-            &quot;desc&quot;: &quot;Overridable method called when the user receives a gift.\n\n```lua\nlocal Cashier = require(path.to.Cashier).client\n\nfunction Cashier:onGiftReceived(giftData: GiftData)\n    print(`{giftData.from} gifted you {giftData.item}!`)\nend\n```&quot;,
+            &quot;desc&quot;: &quot;An overridable callback invoked when the local player receives a gift. Can be overridden to display custom UI or notifications.\n\n```lua\nlocal Cashier = require(path.to.Cashier).client\n\nfunction Cashier:onGiftReceived(giftData)\n\tprint(`You received {giftData.item} from UserId {giftData.from}.`)\nend\n```&quot;,
             &quot;params&quot;: [
                 {
                     &quot;name&quot;: &quot;giftData&quot;,
-                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;desc&quot;: &quot;Information about the received gift&quot;,
                     &quot;lua_type&quot;: &quot;GiftData&quot;
                 }
             ],
             &quot;returns&quot;: [],
             &quot;function_type&quot;: &quot;method&quot;,
-            &quot;tags&quot;: [
-                &quot;Override&quot;
-            ],
             &quot;source&quot;: {
-                &quot;line&quot;: 414,
+                &quot;line&quot;: 454,
                 &quot;path&quot;: &quot;src/CashierClient.luau&quot;
             }
         }
     ],
-    &quot;properties&quot;: [
-        {
-            &quot;name&quot;: &quot;purchaseStarted&quot;,
-            &quot;desc&quot;: &quot;A signal that fires when a purchase prompt is shown to the player.\n    &quot;,
-            &quot;lua_type&quot;: &quot;Signal&lt;&gt;&quot;,
-            &quot;source&quot;: {
-                &quot;line&quot;: 91,
-                &quot;path&quot;: &quot;src/CashierClient.luau&quot;
-            }
-        },
-        {
-            &quot;name&quot;: &quot;purchaseFinished&quot;,
-            &quot;desc&quot;: &quot;A signal that fires when a purchase prompt is closed, providing the name of the item, a boolean indicating whether the purchase was completed successfully, and a boolean indicating if the purchase was a gift.\n    &quot;,
-            &quot;lua_type&quot;: &quot;Signal&lt;string, boolean, boolean&gt;&quot;,
-            &quot;source&quot;: {
-                &quot;line&quot;: 99,
-                &quot;path&quot;: &quot;src/CashierClient.luau&quot;
-            }
-        }
-    ],
+    &quot;properties&quot;: [],
     &quot;types&quot;: [
         {
             &quot;name&quot;: &quot;ItemType&quot;,
             &quot;desc&quot;: &quot;Determines the type of an item.&quot;,
             &quot;lua_type&quot;: &quot;\&quot;DevProduct\&quot; | \&quot;Gamepass\&quot; | \&quot;Semipass\&quot;&quot;,
             &quot;source&quot;: {
-                &quot;line&quot;: 15,
+                &quot;line&quot;: 22,
                 &quot;path&quot;: &quot;src/CashierClient.luau&quot;
             }
         },
         {
             &quot;name&quot;: &quot;Item&quot;,
-            &quot;desc&quot;: &quot;Useful information of an item.&quot;,
+            &quot;desc&quot;: &quot;&quot;,
             &quot;fields&quot;: [
                 {
                     &quot;name&quot;: &quot;name&quot;,
                     &quot;lua_type&quot;: &quot;string&quot;,
-                    &quot;desc&quot;: &quot;The name of the item&quot;
-                },
-                {
-                    &quot;name&quot;: &quot;description&quot;,
-                    &quot;lua_type&quot;: &quot;string&quot;,
-                    &quot;desc&quot;: &quot;The description of the item&quot;
-                },
-                {
-                    &quot;name&quot;: &quot;iconId&quot;,
-                    &quot;lua_type&quot;: &quot;string&quot;,
-                    &quot;desc&quot;: &quot;The icon of the item. This is a full \&quot;rbxassetid://...\&quot; string&quot;
+                    &quot;desc&quot;: &quot;The unique name of the item&quot;
                 },
                 {
                     &quot;name&quot;: &quot;type&quot;,
                     &quot;lua_type&quot;: &quot;ItemType&quot;,
-                    &quot;desc&quot;: &quot;The type of the item&quot;
+                    &quot;desc&quot;: &quot;The type of the item (\&quot;DevProduct\&quot;, \&quot;Gamepass\&quot;, or \&quot;Semipass\&quot;)&quot;
                 },
                 {
                     &quot;name&quot;: &quot;id&quot;,
                     &quot;lua_type&quot;: &quot;number&quot;,
-                    &quot;desc&quot;: &quot;The id of the gamepass of developer product linked with the item&quot;
+                    &quot;desc&quot;: &quot;The Roblox GamePass ID or Developer Product ID&quot;
                 },
                 {
                     &quot;name&quot;: &quot;giftId&quot;,
                     &quot;lua_type&quot;: &quot;number?&quot;,
-                    &quot;desc&quot;: &quot;The id of the developer product for gifting this item&quot;
+                    &quot;desc&quot;: &quot;The Developer Product ID used for gifting this item&quot;
                 }
             ],
             &quot;source&quot;: {
-                &quot;line&quot;: 29,
+                &quot;line&quot;: 32,
                 &quot;path&quot;: &quot;src/CashierClient.luau&quot;
             }
         },
         {
             &quot;name&quot;: &quot;GiftData&quot;,
-            &quot;desc&quot;: &quot;Data from a gift.&quot;,
+            &quot;desc&quot;: &quot;&quot;,
             &quot;fields&quot;: [
                 {
                     &quot;name&quot;: &quot;item&quot;,
                     &quot;lua_type&quot;: &quot;string&quot;,
-                    &quot;desc&quot;: &quot;The name of the item&quot;
+                    &quot;desc&quot;: &quot;The name of the gifted item&quot;
                 },
                 {
                     &quot;name&quot;: &quot;from&quot;,
                     &quot;lua_type&quot;: &quot;number&quot;,
-                    &quot;desc&quot;: &quot;The id of the user that has gifted the item&quot;
+                    &quot;desc&quot;: &quot;The UserId of the player who sent the gift&quot;
                 }
             ],
             &quot;source&quot;: {
-                &quot;line&quot;: 46,
+                &quot;line&quot;: 45,
                 &quot;path&quot;: &quot;src/CashierClient.luau&quot;
             }
         }
     ],
     &quot;name&quot;: &quot;CashierClient&quot;,
-    &quot;desc&quot;: &quot;The client-side of Cashier. Handles purchase prompts, item queries and gift sending.&quot;,
+    &quot;desc&quot;: &quot;The client-side singleton for Cashier. Handles purchase prompts, gifting, item queries, and ownership state.&quot;,
+    &quot;realm&quot;: [
+        &quot;Client&quot;
+    ],
     &quot;source&quot;: {
-        &quot;line&quot;: 63,
+        &quot;line&quot;: 56,
         &quot;path&quot;: &quot;src/CashierClient.luau&quot;
     }
-}</pre></details></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#types" class="table-of-contents__link toc-highlight">Types</a><ul><li><a href="#GiftData" class="table-of-contents__link toc-highlight">GiftData</a></li><li><a href="#Item" class="table-of-contents__link toc-highlight">Item</a></li><li><a href="#ItemType" class="table-of-contents__link toc-highlight">ItemType</a></li></ul></li><li><a href="#properties" class="table-of-contents__link toc-highlight">Properties</a><ul><li><a href="#purchaseFinished" class="table-of-contents__link toc-highlight">purchaseFinished</a></li><li><a href="#purchaseStarted" class="table-of-contents__link toc-highlight">purchaseStarted</a></li></ul></li><li><a href="#functions" class="table-of-contents__link toc-highlight">Functions</a><ul><li><a href="#getAllItems" class="table-of-contents__link toc-highlight">:getAllItems</a></li><li><a href="#getItemById" class="table-of-contents__link toc-highlight">:getItemById</a></li><li><a href="#getItemByName" class="table-of-contents__link toc-highlight">:getItemByName</a></li><li><a href="#getItemPrice" class="table-of-contents__link toc-highlight">:getItemPrice</a></li><li><a href="#getItemsOfType" class="table-of-contents__link toc-highlight">:getItemsOfType</a></li><li><a href="#gift" class="table-of-contents__link toc-highlight">:gift</a></li><li><a href="#hasItem" class="table-of-contents__link toc-highlight">:hasItem</a></li><li><a href="#init" class="table-of-contents__link toc-highlight">:init</a></li><li><a href="#isGiftId" class="table-of-contents__link toc-highlight">:isGiftId</a></li><li><a href="#onGiftReceived" class="table-of-contents__link toc-highlight">:onGiftReceived</a></li><li><a href="#purchaseItem" class="table-of-contents__link toc-highlight">:purchaseItem</a></li></ul></li></ul></div></div></div></div></main></div></div><footer class="footer footer--dark"><div class="container container-fluid"><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2026 Yuzkkj. Built with Moonwave and Docusaurus.</div></div></div></footer></div>
+}</pre></details></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#types" class="table-of-contents__link toc-highlight">Types</a><ul><li><a href="#GiftData" class="table-of-contents__link toc-highlight">GiftData</a></li><li><a href="#Item" class="table-of-contents__link toc-highlight">Item</a></li><li><a href="#ItemType" class="table-of-contents__link toc-highlight">ItemType</a></li></ul></li><li><a href="#functions" class="table-of-contents__link toc-highlight">Functions</a><ul><li><a href="#getAllItems" class="table-of-contents__link toc-highlight">:getAllItems</a></li><li><a href="#getItemById" class="table-of-contents__link toc-highlight">:getItemById</a></li><li><a href="#getItemByName" class="table-of-contents__link toc-highlight">:getItemByName</a></li><li><a href="#getItemPrice" class="table-of-contents__link toc-highlight">:getItemPrice</a></li><li><a href="#getItemsOfType" class="table-of-contents__link toc-highlight">:getItemsOfType</a></li><li><a href="#getUnsentItems" class="table-of-contents__link toc-highlight">:getUnsentItems</a></li><li><a href="#gift" class="table-of-contents__link toc-highlight">:gift</a></li><li><a href="#has" class="table-of-contents__link toc-highlight">:has</a></li><li><a href="#init" class="table-of-contents__link toc-highlight">:init</a></li><li><a href="#isGiftId" class="table-of-contents__link toc-highlight">:isGiftId</a></li><li><a href="#onGiftReceived" class="table-of-contents__link toc-highlight">:onGiftReceived</a></li><li><a href="#purchase" class="table-of-contents__link toc-highlight">:purchase</a></li></ul></li></ul></div></div></div></div></main></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2026 Yuzkkj. Built with Moonwave and Docusaurus.</div></div></div></footer></div>
 </body>
 </html>

@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkdocs=self.webpackChunkdocs||[]).push([[490],{4410:e=>{e.exports=JSON.parse('{"sourceUrl":"https://github.com/Yuzkkj/cashier/blob/main","baseUrl":"/cashier/","classOrder":["CashierServer","CashierClient"],"apiCategories":[]}')}}]);
