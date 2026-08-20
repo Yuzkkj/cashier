@@ -302,7 +302,7 @@ function CashierClient.getItemById(self: CashierClient, itemId: number): Item?
 end
 
 --[=[ 
-	@method getItemPrice
+	@method getItemPriceAsync
 	@within CashierClient
 	@yields
 	@param itemName string -- The name of the item to get the price of
@@ -313,12 +313,12 @@ end
 	```lua
 	local Cashier = require(path.to.Cashier).client
 
-	local price = Cashier:getItemPrice("VIP")
+	local price = Cashier:getItemPriceAsync("VIP")
 
 	print(`VIP costs {price} Robux`)
 	```
 ]=]
-function CashierClient.getItemPrice(self: CashierClient, itemName: string): number
+function CashierClient.getItemPriceAsync(self: CashierClient, itemName: string): number
 	local item = self:getItemByName(itemName)
 	if not item then
 		return 0

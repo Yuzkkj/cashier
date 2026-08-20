@@ -87,10 +87,10 @@ local item = Cashier:getItemById(12345678)
 
 ### Fetch Item Robux Price
 
-You can asynchronously fetch the current live Robux price of any registered item using `getItemPrice`:
+You can asynchronously fetch the current live Robux price of any registered item using `getItemPriceAsync`:
 
 ```lua
-local price = Cashier:getItemPrice("VIP")
+local price = Cashier:getItemPriceAsync("VIP")
 print(`VIP costs {price} Robux`)
 ```
 
@@ -99,7 +99,7 @@ When querying item prices, keep in mind that the returned price can differ betwe
 - **On the Client**: `MarketplaceService:GetProductInfoAsync` can take into account personalized discounts (for instance, if the player has Roblox Premium benefits or regional pricing).
 - **On the Server**: `MarketplaceService:GetProductInfoAsync` returns the standard baseline price without user-specific discounts.
 
-For custom shop UIs, it is recommended to call `Cashier:getItemPrice()` on the **client** so players see their exact personalized price. When a purchase completes, the server receives the true amount paid directly from `receiptInfo.CurrencySpent`.
+For custom shop UIs, it is recommended to call `Cashier:getItemPriceAsync()` on the **client** so players see their exact personalized price. When a purchase completes, the server receives the true amount paid directly from `receiptInfo.CurrencySpent`.
 :::
 
 ---

@@ -135,11 +135,15 @@ type PurchaseData = {
 	@interface InitOptions
 	@within CashierServer
 	.itemsData { ItemData } -- An array of all item configurations to register
+	.resetData boolean? -- Determines if the data should be reseted
+	.useMock boolean? -- Determines if Cashier should use mock data and purchases
 
 	Options for initializing the server-side of Cashier.
 ]=]
 type InitOptions = {
 	itemsData: { ItemData },
+	resetData: boolean?,
+	useMock: boolean?,
 }
 
 --[=[
@@ -237,7 +241,7 @@ function CashierServer.init(self: CashierServer, options: InitOptions): ()
 		self.purchaseCompleted:Fire({
 			player = player,
 			item = item.name,
-			robuxSpent = self:getItemPrice(item.name),
+			robuxSpent = self:getItemPriceAsync(item.name),
 		})
 	end)
 
@@ -505,7 +509,7 @@ function CashierServer._gift(
 
 		task.spawn(self._processGift, self, player, {
 			ProductId = item.id,
-			CurrencySpent = self:getItemPrice(itemName),
+			CurrencySpent = self:getItemPriceAsync(itemName),
 		})
 
 		return true
@@ -646,7 +650,7 @@ function CashierServer.getItemById(self: CashierServer, itemId: number): Item?
 end
 
 --[=[ 
-	@method getItemPrice
+	@method getItemPriceAsync
 	@within CashierServer
 	@yields
 	@param itemName string -- The name of the item to get the price of
@@ -657,12 +661,12 @@ end
 	```lua
 	local Cashier = require(path.to.Cashier).server
 
-	local price = Cashier:getItemPrice("VIP")
+	local price = Cashier:getItemPriceAsync("VIP")
 
 	print(`VIP costs {price} Robux`)
 	```
 ]=]
-function CashierServer.getItemPrice(self: CashierServer, itemName: string): number
+function CashierServer.getItemPriceAsync(self: CashierServer, itemName: string): number
 	local item = self:getItemByName(itemName)
 	if not item then
 		return 0
