@@ -1,12 +1,13 @@
 title = "Cashier"
+
+gitSourceBranch = "main"
 classOrder = [
 	"CashierServer",
 	"CashierClient"
 ]
 
-gitSourceBranch = "main"
-
 [docusaurus]
+favicon = "logo\favicon.png"
 tagline = "A clean, robust library to streamline Gamepass, Developer Product, and Gifting management."
 
 [home]
@@ -23,8 +24,3 @@ description = "First-class player-to-player gifting featuring automatic offline 
 [[home.features]]
 title = "Secure Transactions"
 description = "Fully automated and secure process-receipt loops with built-in purchase history logging. Eliminates duplicate-granting bugs and transaction exploits."
-
-[[navbar.items]]
-href = "https://github.com/yuzkkj/cashier"
-label = "GitHub"
-position = "right"
