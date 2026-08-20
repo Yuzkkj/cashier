@@ -1,4 +1,4 @@
-# Cashier
+# ![Cashier](logo/thumbnail.jpg)
 
 A clean, robust Roblox library to streamline Gamepass, Developer Product, and Gifting management.
 
