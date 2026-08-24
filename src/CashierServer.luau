@@ -202,6 +202,7 @@ function CashierServer.init(self: CashierServer, options: InitOptions): ()
 		self._gift,
 		self.getUnsentItems,
 	})
+	self._options = options
 	self._playerStore = ProfileStore.New(PROFILE_STORE_INDEX, TEMPLATE)
 
 	for _, player in Players:GetPlayers() do
@@ -300,7 +301,13 @@ function CashierServer.init(self: CashierServer, options: InitOptions): ()
 end
 
 function CashierServer._playerAdded(self: CashierServer, player: Player): ()
-	local profile = self._playerStore:StartSessionAsync(tostring(player.UserId))
+	if self._options.resetData then
+		self._playerStore:RemoveAsync(tostring(player.UserId))
+	end
+
+	local profile = if self._options.useMock
+		then self._playerStore.Mock:StartSessionAsync(tostring(player.UserId))
+		else self._playerStore:StartSessionAsync(tostring(player.UserId))
 
 	if not profile then
 		player:Kick("Profile load fail - Please rejoin")
@@ -778,6 +785,7 @@ end
 
 export type CashierServer = typeof(CashierServer) & {
 	_networker: Networker.Server,
+	_options: InitOptions,
 	_playerStore: ProfileStore.ProfileStore<typeof(TEMPLATE)>,
 }
 
