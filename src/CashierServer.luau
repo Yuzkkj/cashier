@@ -198,7 +198,7 @@ function CashierServer.init(self: CashierServer, options: InitOptions): ()
 	end
 
 	self._networker = Networker.server.new("Cashier", self, {
-		self._purchase,
+		self.purchase,
 		self._gift,
 		self.getUnsentItems,
 	})
@@ -429,42 +429,6 @@ function CashierServer._addItemToUnsent(self: CashierServer, player: Player, ite
 	end, function()
 		return 1
 	end)
-end
-
-function CashierServer._purchase(self: CashierServer, player: Player, itemName: string, ...: any?): ()
-	local item = self:getItemByName(itemName)
-	if not item then
-		return
-	end
-
-	if self:has(player, itemName) then
-		return
-	end
-
-	local predicate = self._itemsPredicate[itemName]
-	if predicate then
-		local result = predicate(player, ...)
-		if not result then
-			return
-		end
-
-		local params = { ... }
-		if #params > 0 then
-			if not self._pendingParams[player] then
-				self._pendingParams[player] = {}
-			end
-
-			self._pendingParams[player][itemName] = params
-		end
-	end
-
-	if item.type == "Gamepass" then
-		MarketplaceService:PromptGamePassPurchase(player, item.id)
-	else
-		MarketplaceService:PromptProductPurchase(player, item.id)
-	end
-
-	self._networker:set(player, "_purchasing", true)
 end
 
 function CashierServer._gift(
@@ -781,6 +745,59 @@ function CashierServer.give(self: CashierServer, player: Player, itemName: strin
 	else
 		return callback(player)
 	end
+end
+
+--[=[
+	@method purchase
+	@within CashierServer
+	@param player Player -- The player to prompt to purchase
+	@param itemName string -- The name of the item
+	@param ... any? -- Any extra params that will be given as arguments to the predicate function, if it exists
+
+	Promps the player to purchase an item.
+
+	```lua
+	local Cashier = require(path.to.Cashier).server
+
+	if not Cashier:has(player, "VIP") then
+		Cashier:purchase(player, "VIP")
+	end
+	```
+]=]
+function CashierServer.purchase(self: CashierServer, player: Player, itemName: string, ...: any?): ()
+	local item = self:getItemByName(itemName)
+	if not item then
+		return
+	end
+
+	if self:has(player, itemName) then
+		return
+	end
+
+	local predicate = self._itemsPredicate[itemName]
+	if predicate then
+		local result = predicate(player, ...)
+		if not result then
+			return
+		end
+
+		local params = { ... }
+		if #params > 0 then
+			if not self._pendingParams[player] then
+				self._pendingParams[player] = {}
+			end
+
+			self._pendingParams[player][itemName] = params
+		end
+	end
+
+	if item.type == "Gamepass" then
+		MarketplaceService:PromptGamePassPurchase(player, item.id)
+	else
+		MarketplaceService:PromptProductPurchase(player, item.id)
+	end
+
+	self._networker:set(player, "_purchasing", true)
 end
 
 export type CashierServer = typeof(CashierServer) & {
