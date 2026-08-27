@@ -404,7 +404,7 @@ function CashierClient.purchase(self: CashierClient, itemName: string, ...: any?
 		return
 	end
 
-	self._networker:fire("_purchase", itemName, ...)
+	self._networker:fire("purchase", itemName, ...)
 end
 
 --[=[ 
