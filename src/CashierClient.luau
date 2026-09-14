@@ -54,7 +54,6 @@ type GiftData = {
 	The client-side singleton for Cashier. Handles purchase prompts, gifting, item queries, and ownership state.
 ]=]
 local CashierClient = {
-	_items = {} :: { Item },
 	_purchasing = false,
 	--[=[
 		@prop giftingFailed Signal<string, number>
@@ -218,6 +217,10 @@ end
 	```
 ]=]
 function CashierClient.getAllItems(self: CashierClient): { Item }
+	repeat
+		task.wait()
+	until self._items ~= nil
+
 	return self._items
 end
 
@@ -240,6 +243,10 @@ end
 	```
 ]=]
 function CashierClient.getItemsOfType(self: CashierClient, itemType: ItemType): { Item }
+	repeat
+		task.wait()
+	until self._items ~= nil
+
 	return Sift.Array.filter(self._items, function(item: Item)
 		return item.type == itemType
 	end)
@@ -264,6 +271,10 @@ end
 	```
 ]=]
 function CashierClient.getItemByName(self: CashierClient, itemName: string): Item?
+	repeat
+		task.wait()
+	until self._items ~= nil
+
 	local index = Sift.Array.findWhere(self._items, function(item: Item)
 		return item.name == itemName
 	end)
@@ -294,6 +305,10 @@ end
 	:::
 ]=]
 function CashierClient.getItemById(self: CashierClient, itemId: number): Item?
+	repeat
+		task.wait()
+	until self._items ~= nil
+
 	local index = Sift.Array.findWhere(self._items, function(item: Item)
 		return item.id == itemId or item.giftId == itemId
 	end)
@@ -351,6 +366,10 @@ end
 	```
 ]=]
 function CashierClient.isGiftId(self: CashierClient, itemId: number): boolean
+	repeat
+		task.wait()
+	until self._items ~= nil
+
 	return Sift.Array.findWhere(self._items, function(item: Item)
 		return item.giftId == itemId
 	end) ~= nil
@@ -454,8 +473,9 @@ end
 function CashierClient.onGiftReceived(self: CashierClient, giftData: GiftData): () end
 
 export type CashierClient = typeof(CashierClient) & {
-	_owned: { [string]: true },
+	_items: { Item },
 	_networker: Networker.Client,
+	_owned: { [string]: true },
 }
 
 return CashierClient :: CashierClient
