@@ -55,6 +55,7 @@ type GiftData = {
 ]=]
 local CashierClient = {
 	_purchasing = false,
+	_itemPrices = {} :: { [string]: number },
 	--[=[
 		@prop giftingFailed Signal<string, number>
 		@within CashierClient
@@ -88,8 +89,9 @@ local CashierClient = {
 --[=[
 	@method init
 	@within CashierClient
+	@yields
 	
-	Initializes the client-side of Cashier and begins listening for network replication from the server.
+	Initializes the client-side of Cashier, begins listening for network replication, and caches item prices after receiving the registered items from the server.
 
 	```lua
 	local Cashier = require(path.to.Cashier).client
@@ -161,6 +163,19 @@ function CashierClient.init(self: CashierClient): ()
 		self._purchasing = false
 		self.purchaseFinished:Fire(item.name, wasPurchased, self:isGiftId(productId))
 	end)
+
+	for _, item in self:getAllItems() do
+		local success, productInfo = pcall(function()
+			return MarketplaceService:GetProductInfoAsync(
+				item.id,
+				if item.type == "Gamepass" then Enum.InfoType.GamePass else Enum.InfoType.Product
+			)
+		end)
+
+		self._itemPrices[item.name] = if success and productInfo and productInfo.PriceInRobux
+			then productInfo.PriceInRobux
+			else 0
+	end
 end
 
 function CashierClient._giftingFailed(self: CashierClient, itemName: string, recipientId: number): ()
@@ -279,6 +294,10 @@ function CashierClient.getItemByName(self: CashierClient, itemName: string): Ite
 		return item.name == itemName
 	end)
 
+	if not index then
+		warn(`No item found with name "{itemName}"`)
+	end
+
 	return index and self._items[index]
 end
 
@@ -313,40 +332,31 @@ function CashierClient.getItemById(self: CashierClient, itemId: number): Item?
 		return item.id == itemId or item.giftId == itemId
 	end)
 
+	if not index then
+		warn(`No item found with id "{itemId}"`)
+	end
+
 	return index and self._items[index]
 end
 
 --[=[ 
-	@method getItemPriceAsync
+	@method getItemPrice
 	@within CashierClient
-	@yields
 	@param itemName string -- The name of the item to get the price of
 	@return number -- The price of the item in Robux, or 0 if unavailable
 
-	Retrieves the price of an item in Robux from MarketplaceService.
+	Returns the price of the item.
 
 	```lua
 	local Cashier = require(path.to.Cashier).client
 
-	local price = Cashier:getItemPriceAsync("VIP")
+	local price = Cashier:getItemPrice("VIP")
 
 	print(`VIP costs {price} Robux`)
 	```
 ]=]
-function CashierClient.getItemPriceAsync(self: CashierClient, itemName: string): number
-	local item = self:getItemByName(itemName)
-	if not item then
-		return 0
-	end
-
-	local success, productInfo = pcall(function()
-		return MarketplaceService:GetProductInfoAsync(
-			item.id,
-			if item.type == "Gamepass" then Enum.InfoType.GamePass else Enum.InfoType.Product
-		)
-	end)
-
-	return if success and productInfo and productInfo.PriceInRobux then productInfo.PriceInRobux else 0
+function CashierClient.getItemPrice(self: CashierClient, itemName: string): number
+	return self._itemPrices[itemName] or 0
 end
 
 --[=[ 
