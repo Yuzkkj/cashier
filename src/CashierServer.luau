@@ -155,7 +155,6 @@ type InitOptions = {
 local CashierServer = {
 	_giftingCache = {} :: { [Player]: number },
 	_items = {} :: { Item },
-	_itemPrices = {} :: { [string]: number },
 	_itemsCallback = {} :: { [string]: (Player, ...any?) -> boolean },
 	_itemsPredicate = {} :: { [string]: (Player, ...any?) -> boolean },
 	_pendingParams = {} :: { [Player]: { [string]: { any } } },
@@ -172,10 +171,9 @@ local CashierServer = {
 --[=[
 	@method init
 	@within CashierServer
-	@yields
 	@param options InitOptions -- Options containing item configurations
 	
-	Initializes CashierServer, caches item prices, sets up ProfileStore session handling, registers network endpoints, and connects MarketplaceService purchase events.
+	Initializes CashierServer, sets up ProfileStore session handling, registers network endpoints, and connects MarketplaceService purchase events.
 
 	```lua
 	local Cashier = require(path.to.Cashier).server
@@ -206,19 +204,6 @@ function CashierServer.init(self: CashierServer, options: InitOptions): ()
 	})
 	self._options = options
 	self._playerStore = ProfileStore.New(PROFILE_STORE_INDEX, TEMPLATE)
-
-	for _, item in self._items do
-		local success, productInfo = pcall(function()
-			return MarketplaceService:GetProductInfoAsync(
-				item.id,
-				if item.type == "Gamepass" then Enum.InfoType.GamePass else Enum.InfoType.Product
-			)
-		end)
-
-		self._itemPrices[item.name] = if success and productInfo and productInfo.PriceInRobux
-			then productInfo.PriceInRobux
-			else 0
-	end
 
 	for _, player in Players:GetPlayers() do
 		task.spawn(self._playerAdded, self, player)
@@ -257,7 +242,7 @@ function CashierServer.init(self: CashierServer, options: InitOptions): ()
 		self.purchaseCompleted:Fire({
 			player = player,
 			item = item.name,
-			robuxSpent = self:getItemPrice(item.name),
+			robuxSpent = self:getItemPriceAsync(item.name),
 		})
 	end)
 
@@ -495,7 +480,7 @@ function CashierServer._gift(
 
 		task.spawn(self._processGift, self, player, {
 			ProductId = item.id,
-			CurrencySpent = self:getItemPrice(itemName),
+			CurrencySpent = self:getItemPriceAsync(itemName),
 		})
 
 		return true
@@ -602,10 +587,6 @@ function CashierServer.getItemByName(self: CashierServer, itemName: string): Ite
 		return item.name == itemName
 	end)
 
-	if not index then
-		warn(`No item found with name "{itemName}"`)
-	end
-
 	return index and self._items[index]
 end
 
@@ -636,31 +617,40 @@ function CashierServer.getItemById(self: CashierServer, itemId: number): Item?
 		return item.id == itemId or item.giftId == itemId
 	end)
 
-	if not index then
-		warn(`No item found with id "{itemId}"`)
-	end
-
 	return index and self._items[index]
 end
 
 --[=[ 
-	@method getItemPrice
+	@method getItemPriceAsync
 	@within CashierServer
+	@yields
 	@param itemName string -- The name of the item to get the price of
 	@return number -- The price of the item in Robux, or 0 if unavailable
 
-	Returns the price of the item.
+	Retrieves the price of an item in Robux from MarketplaceService.
 
 	```lua
 	local Cashier = require(path.to.Cashier).server
 
-	local price = Cashier:getItemPrice("VIP")
+	local price = Cashier:getItemPriceAsync("VIP")
 
 	print(`VIP costs {price} Robux`)
 	```
 ]=]
-function CashierServer.getItemPrice(self: CashierServer, itemName: string): number
-	return self._itemPrices[itemName] or 0
+function CashierServer.getItemPriceAsync(self: CashierServer, itemName: string): number
+	local item = self:getItemByName(itemName)
+	if not item then
+		return 0
+	end
+
+	local success, productInfo = pcall(function()
+		return MarketplaceService:GetProductInfoAsync(
+			item.id,
+			if item.type == "Gamepass" then Enum.InfoType.GamePass else Enum.InfoType.Product
+		)
+	end)
+
+	return if success and productInfo and productInfo.PriceInRobux then productInfo.PriceInRobux else 0
 end
 
 --[=[ 
