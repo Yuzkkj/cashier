@@ -587,6 +587,10 @@ function CashierServer.getItemByName(self: CashierServer, itemName: string): Ite
 		return item.name == itemName
 	end)
 
+	if not index then
+		warn(`No item found with name "{itemName}"`)
+	end
+
 	return index and self._items[index]
 end
 
@@ -616,6 +620,10 @@ function CashierServer.getItemById(self: CashierServer, itemId: number): Item?
 	local index = Sift.Array.findWhere(self._items, function(item: Item)
 		return item.id == itemId or item.giftId == itemId
 	end)
+
+	if not index then
+		warn(`No item found with id "{itemId}"`)
+	end
 
 	return index and self._items[index]
 end
