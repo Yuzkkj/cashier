@@ -493,6 +493,17 @@ function CashierServer._gift(
 end
 
 --[=[
+	@method wipe
+	@within CashierServer
+	@param player Player -- The player whose items will be wiped
+
+	Wipes out the given players items.
+]=]
+function CashierServer.wipe(self: CashierServer, player: Player): ()
+	self._playerStore:RemoveAsync(tostring(player.UserId))
+end
+
+--[=[
 	@method getUnsentItems
 	@within CashierServer
 	@param player Player -- The player to get the unsent items of
