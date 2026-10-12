@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.10.1">
-<title data-rh="true">CashierServer | Cashier</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://Yuzkkj.github.io/cashier/api/CashierServer"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docusaurus_tag" content="default"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docsearch:docusaurus_tag" content="default"><meta data-rh="true" property="og:title" content="CashierServer | Cashier"><meta data-rh="true" name="description" content="The server-side singleton for Cashier. Handles item registration, purchase validation, receipt processing, and cross-server gifting."><meta data-rh="true" property="og:description" content="The server-side singleton for Cashier. Handles item registration, purchase validation, receipt processing, and cross-server gifting."><link data-rh="true" rel="icon" href="/cashier/logoavicon.png"><link data-rh="true" rel="canonical" href="https://Yuzkkj.github.io/cashier/api/CashierServer"><link data-rh="true" rel="alternate" href="https://Yuzkkj.github.io/cashier/api/CashierServer" hreflang="en"><link data-rh="true" rel="alternate" href="https://Yuzkkj.github.io/cashier/api/CashierServer" hreflang="x-default"><link rel="stylesheet" href="/cashier/assets/css/styles.5ec48d9a.css">
-<script src="/cashier/assets/js/runtime~main.4580b471.js" defer="defer"></script>
-<script src="/cashier/assets/js/main.54060070.js" defer="defer"></script>
+<title data-rh="true">CashierServer | Cashier</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://Yuzkkj.github.io/cashier/api/CashierServer"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docusaurus_tag" content="default"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docsearch:docusaurus_tag" content="default"><meta data-rh="true" property="og:title" content="CashierServer | Cashier"><meta data-rh="true" name="description" content="The server-side of Cashier."><meta data-rh="true" property="og:description" content="The server-side of Cashier."><link data-rh="true" rel="icon" href="/cashier/logoavicon.png"><link data-rh="true" rel="canonical" href="https://Yuzkkj.github.io/cashier/api/CashierServer"><link data-rh="true" rel="alternate" href="https://Yuzkkj.github.io/cashier/api/CashierServer" hreflang="en"><link data-rh="true" rel="alternate" href="https://Yuzkkj.github.io/cashier/api/CashierServer" hreflang="x-default"><link rel="stylesheet" href="/cashier/assets/css/styles.5ec48d9a.css">
+<script src="/cashier/assets/js/runtime~main.deb755fe.js" defer="defer"></script>
+<script src="/cashier/assets/js/main.99bc722b.js" defer="defer"></script>
 </head>
 <body>
 <svg style="display: none;"><defs>
 <symbol id="theme-svg-external-link" viewBox="0 0 24 24"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
 </defs></svg>
 <script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")),document.documentElement.setAttribute("data-theme-choice",t||"system")}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><div role="region" aria-label="Skip to main content"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Skip to main content</a></div><nav aria-label="Main" class="theme-layout-navbar navbar navbar--fixed-top"><div class="navbar__inner"><div class="theme-layout-navbar-left navbar__items"><button aria-label="Toggle navigation bar" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/cashier/"><b class="navbar__title text--truncate">Cashier</b></a><a class="navbar__item navbar__link" href="/cashier/docs/intro">Docs</a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/cashier/api/">API</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href="https://github.com/Yuzkkj/cashier" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="system mode" aria-label="Switch between dark and light mode (currently system mode)"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP systemToggleIcon_QzmC"><path fill="currentColor" d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"><div class="navbar__search"><span aria-label="expand searchbar" role="button" class="search-icon" tabindex="0"></span><input id="search_input_react" type="search" placeholder="Loading..." aria-label="Search" class="navbar__search-input search-bar" disabled=""></div></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="theme-layout-main main-wrapper mainWrapper_z2l0 docPageContainer_wNNk"><div class="docPage_Dpn1"><div class="docSidebarContainer_o_re"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" href="/cashier/api/CashierServer"><span title="​Cashier​Server" class="linkLabel_WmDU">​Cashier​Server</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/cashier/api/CashierClient"><span title="​Cashier​Client" class="linkLabel_WmDU">​Cashier​Client</span></a></li></ul></nav></div></div><main class="docMainContainer_HJE1"><div class="container padding-vert--lg"><div class="row"><div class="col docItemCol_MU3C"><div class="docItemContainer_Wv98"><article><div class="member_J0w1 markdown"><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_oUs_"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><header><h1 class="docTitle_mZRt" style="text-decoration:none"><span style="display:inline-block">Cashier</span><span style="display:inline-block">Server</span></h1><div class="luaClassTags_EipM"><span class="badge_Ba2I" style="color:#00CC67"><span class="badgeTooltip_cWXP">This item only works when running on the server.</span><span class="badgeToolTipTail_H9D_"><svg fill="#00CC67" xmlns="http://www.w3.org/2000/svg" version="1.1" x="0px" y="0px" viewBox="0 0 90 90" role="img" aria-label="This item only works when running on the server."><polygon points="6.125,72.421 58.544,88.523 58.544,24.372 6.125,8.269 "></polygon><polygon points="79.818,15.77 79.868,15.755 29.615,1.453 10.328,6.318 60.102,21.609 "></polygon><path d="M61.643,78.738l22.232-6.582V17.801l-22.232,6.584V78.738z M73.811,69.257c-1.174,0-2.125-1.19-2.125-2.659  c0-1.468,0.951-2.658,2.125-2.658c1.172,0,2.123,1.19,2.123,2.658C75.934,68.066,74.982,69.257,73.811,69.257z M64.898,32.121  l16.336-4.41v7.117l-16.336,4.409V32.121z M64.898,41.292l16.336-4.41v7.116l-16.336,4.409V41.292z M64.898,50.463l16.336-4.411  v7.116l-16.336,4.411V50.463z"></path><polygon points="83.875,74.893 61.643,81.477 61.643,88.547 83.875,81.963 "></polygon></svg> <!-- -->Server</span></span></div><div>
-<p>The server-side singleton for Cashier. Handles item registration, purchase validation, receipt processing, and cross-server gifting.</p>
+<p>The server-side of Cashier.</p>
 </div></header><h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="types">Types<a href="#types" class="hash-link" aria-label="Direct link to Types" title="Direct link to Types" translate="no">​</a></h2><div class="divider_rE5g"></div><h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="ItemType"><code style="text-decoration:none">ItemType</code><a href="#ItemType" class="hash-link" aria-label="Direct link to ItemType" title="Direct link to ItemType" translate="no">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/Yuzkkj/cashier/blob/main/src/CashierServer.luau#L30"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code class="purple_ieR2">type</code> <code>ItemType<!-- --> = </code> <code class="blue_P4bS">&quot;DevProduct&quot;</code><code class="op_lSLc"> | </code><code class="blue_P4bS">&quot;Gamepass&quot;</code><code class="op_lSLc"> | </code><code class="blue_P4bS">&quot;Semipass&quot;</code></div><div>
 <p>Determines the type of an item.</p>
 </div><div class="divider_rE5g"></div><h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="Item"><code style="text-decoration:none">Item</code><a href="#Item" class="hash-link" aria-label="Direct link to Item" title="Direct link to Item" translate="no">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/Yuzkkj/cashier/blob/main/src/CashierServer.luau#L40"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code class="purple_ieR2">interface</code> <code>Item<!-- --> <!-- -->{</code><div class="inset_uKQm"><div><code>name<!-- -->: </code><code class="blue_P4bS">string</code><span class="inlineDescription_G7Er">-- <span>
@@ -111,11 +111,11 @@
 </span></span></div><div><code>useMock<!-- -->: </code><code class="blue_P4bS">boolean?</code><span class="inlineDescription_G7Er">-- <span>
 <p>Determines if Cashier should use mock data and purchases</p>
 </span></span></div></div><code>}</code></div><div>
-<p>Options for initializing the server-side of Cashier.</p>
+<p>Options for initializing Cashier.</p>
 </div><h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="functions">Functions<a href="#functions" class="hash-link" aria-label="Direct link to Functions" title="Direct link to Functions" translate="no">​</a></h2><div class="divider_rE5g"></div><h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="init"><code style="text-decoration:none">init</code><a href="#init" class="hash-link" aria-label="Direct link to init" title="Direct link to init" translate="no">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/Yuzkkj/cashier/blob/main/src/CashierServer.luau#L187"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>CashierServer<!-- -->:</code><code class="green_DgR4">init</code><code>(</code><div class="inset_uKQm"><div><code>options<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/cashier/api/CashierServer#InitOptions">InitOptions</a></code><span class="inlineDescription_G7Er">-- <span>
 <p>Options containing item configurations</p>
 </span></span></div></div><code>) → </code><code>(</code><code>)</code></div><div>
-<p>Initializes CashierServer, sets up ProfileStore session handling, registers network endpoints, and connects MarketplaceService purchase events.</p>
+<p>Initializes Cashier with the given options.</p>
 <pre class="language-lua"><code class="language-lua"><span class="token keyword">local</span> Cashier <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span>path<span class="token punctuation">.</span>to<span class="token punctuation">.</span>Cashier<span class="token punctuation">)</span><span class="token punctuation">.</span>server
 <span class="token keyword">local</span> items <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span>path<span class="token punctuation">.</span>to<span class="token punctuation">.</span>items<span class="token punctuation">)</span>
 
@@ -126,13 +126,13 @@ Cashier<span class="token punctuation">:</span><span class="token function">init
 </div><div class="divider_rE5g"></div><h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="wipe"><code style="text-decoration:none">wipe</code><a href="#wipe" class="hash-link" aria-label="Direct link to wipe" title="Direct link to wipe" translate="no">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/Yuzkkj/cashier/blob/main/src/CashierServer.luau#L502"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>CashierServer<!-- -->:</code><code class="green_DgR4">wipe</code><code>(</code><div class="inset_uKQm"><div><code>player<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="https://developer.roblox.com/en-us/api-reference/class/Player" target="_blank" rel="noopener noreferrer">Player<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound" style="color:gray;vertical-align:middle;margin-left:2px"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></code><span class="inlineDescription_G7Er">-- <span>
 <p>The player whose items will be wiped</p>
 </span></span></div></div><code>) → </code><code>(</code><code>)</code></div><div>
-<p>Wipes out the given players items.</p>
+<p>Wipes out the given player items.</p>
 </div><div class="divider_rE5g"></div><h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="getUnsentItems"><code style="text-decoration:none">getUnsentItems</code><a href="#getUnsentItems" class="hash-link" aria-label="Direct link to getUnsentItems" title="Direct link to getUnsentItems" translate="no">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/Yuzkkj/cashier/blob/main/src/CashierServer.luau#L524"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>CashierServer<!-- -->:</code><code class="green_DgR4">getUnsentItems</code><code>(</code><div class="inset_uKQm"><div><code>player<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="https://developer.roblox.com/en-us/api-reference/class/Player" target="_blank" rel="noopener noreferrer">Player<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound" style="color:gray;vertical-align:middle;margin-left:2px"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></code><span class="inlineDescription_G7Er">-- <span>
 <p>The player to get the unsent items of</p>
 </span></span></div></div><code>) → </code><code class="purple_ieR2">{</code><span><code>[</code><code class="blue_P4bS">string</code><code>]</code></span><code>: </code><code class="blue_P4bS">number</code><code class="purple_ieR2">}</code><span class="inlineDescription_G7Er">-- <span>
 <p>A dictionary mapping item names to unsent gift counts</p>
 </span></span></div><div>
-<p>Returns all unsent gifts stored in the player's profile that failed to deliver.</p>
+<p>Returns all unsent gifts stored in the player's profile.</p>
 <pre class="language-lua"><code class="language-lua"><span class="token keyword">local</span> Cashier <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span>path<span class="token punctuation">.</span>to<span class="token punctuation">.</span>Cashier<span class="token punctuation">)</span><span class="token punctuation">.</span>server
 
 <span class="token keyword">local</span> unsentItems <span class="token operator">=</span> Cashier<span class="token punctuation">:</span><span class="token function">getUnsentItems</span><span class="token punctuation">(</span>player<span class="token punctuation">)</span>
@@ -214,10 +214,10 @@ Cashier<span class="token punctuation">:</span><span class="token function">init
 
 </div><div class="divider_rE5g"></div><h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="getItemPriceAsync"><code style="text-decoration:none">getItemPriceAsync</code><a href="#getItemPriceAsync" class="hash-link" aria-label="Direct link to getItemPriceAsync" title="Direct link to getItemPriceAsync" translate="no">​</a></h3><span class="badge_Ba2I" style="color:#f1c40f"><span class="badgeTooltip_cWXP">This is a yielding function. When called, it will pause the Lua thread that called the function until a result is ready to be returned, without interrupting other scripts.</span><span class="badgeToolTipTail_H9D_"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="#f1c40f" role="img" aria-label="This is a yielding function. When called, it will pause the Lua thread that called the function until a result is ready to be returned, without interrupting other scripts."><path d="M96.4 11.9c-1.4-2.5-4-4-6.9-4H10.8c-2.9 0-5.4 1.5-6.9 4-1.4 2.5-1.4 5.5 0 7.9L43.3 88c1.4 2.5 4 4 6.9 4 2.9 0 5.4-1.5 6.9-4l39.3-68.2c1.4-2.4 1.4-5.4 0-7.9zM46.3 54.5c1.1-1.1 2.3-1.6 3.8-1.6s2.8.5 3.8 1.6c1.1 1.1 1.6 2.3 1.6 3.8s-.5 2.8-1.6 3.8c-1.1 1.1-2.3 1.6-3.8 1.6s-2.8-.5-3.8-1.6c-1.1-1.1-1.6-2.3-1.6-3.8.1-1.5.6-2.8 1.6-3.8zm-.5-4.9V21.8h8.8v27.8h-8.8z"></path></svg> <!-- -->Yields</span></span><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/Yuzkkj/cashier/blob/main/src/CashierServer.luau#L659"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>CashierServer<!-- -->:</code><code class="green_DgR4">getItemPriceAsync</code><code>(</code><div class="inset_uKQm"><div><code>itemName<!-- -->: </code><code class="blue_P4bS">string</code><span class="inlineDescription_G7Er">-- <span>
 <p>The name of the item to get the price of</p>
-</span></span></div></div><code>) → </code><code class="blue_P4bS">number</code><span class="inlineDescription_G7Er">-- <span>
-<p>The price of the item in Robux, or 0 if unavailable</p>
+</span></span></div></div><code>) → </code><code class="blue_P4bS">number?</code><span class="inlineDescription_G7Er">-- <span>
+<p>The price of the item in Robux</p>
 </span></span></div><div>
-<p>Retrieves the price of an item in Robux from MarketplaceService.</p>
+<p>Retrieves the price of an item in Robux.</p>
 <pre class="language-lua"><code class="language-lua"><span class="token keyword">local</span> Cashier <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span>path<span class="token punctuation">.</span>to<span class="token punctuation">.</span>Cashier<span class="token punctuation">)</span><span class="token punctuation">.</span>server
 
 <span class="token keyword">local</span> price <span class="token operator">=</span> Cashier<span class="token punctuation">:</span><span class="token function">getItemPriceAsync</span><span class="token punctuation">(</span><span class="token string">"VIP"</span><span class="token punctuation">)</span>
@@ -229,7 +229,7 @@ Cashier<span class="token punctuation">:</span><span class="token function">init
 </span></span></div></div><code>) → </code><code class="blue_P4bS">boolean</code><span class="inlineDescription_G7Er">-- <span>
 <p>True if the item is a gift ID, false otherwise</p>
 </span></span></div><div>
-<p>Checks if an item ID is a registered gift Developer Product ID.</p>
+<p>Checks if the given ID is the gift ID of a registered item.</p>
 <pre class="language-lua"><code class="language-lua"><span class="token keyword">local</span> Cashier <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span>path<span class="token punctuation">.</span>to<span class="token punctuation">.</span>Cashier<span class="token punctuation">)</span><span class="token punctuation">.</span>server
 
 <span class="token keyword">local</span> id <span class="token operator">=</span> <span class="token number">123456</span>
@@ -257,7 +257,7 @@ Cashier<span class="token punctuation">:</span><span class="token function">init
 </span></span></div></div><code>) → </code><code class="blue_P4bS">boolean</code><span class="inlineDescription_G7Er">-- <span>
 <p>True if the item was successfully given, false otherwise</p>
 </span></span></div><div>
-<p>Gives an item to a player, updates their profile data and client ownership state, and executes the item's registered callback.</p>
+<p>Gives an item to a player.</p>
 <pre class="language-lua"><code class="language-lua"><span class="token keyword">local</span> Cashier <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span>path<span class="token punctuation">.</span>to<span class="token punctuation">.</span>Cashier<span class="token punctuation">)</span><span class="token punctuation">.</span>server
 
 Cashier<span class="token punctuation">:</span><span class="token function">give</span><span class="token punctuation">(</span>player<span class="token punctuation">,</span> <span class="token string">"VIP"</span><span class="token punctuation">)</span>
@@ -280,7 +280,7 @@ Cashier<span class="token punctuation">:</span><span class="token function">give
     &quot;functions&quot;: [
         {
             &quot;name&quot;: &quot;init&quot;,
-            &quot;desc&quot;: &quot;Initializes CashierServer, sets up ProfileStore session handling, registers network endpoints, and connects MarketplaceService purchase events.\n\n```lua\nlocal Cashier = require(path.to.Cashier).server\nlocal items = require(path.to.items)\n\nCashier:init({\n\titemsData = items,\n})\n```&quot;,
+            &quot;desc&quot;: &quot;Initializes Cashier with the given options.\n\n```lua\nlocal Cashier = require(path.to.Cashier).server\nlocal items = require(path.to.items)\n\nCashier:init({\n\titemsData = items,\n})\n```&quot;,
             &quot;params&quot;: [
                 {
                     &quot;name&quot;: &quot;options&quot;,
@@ -297,7 +297,7 @@ Cashier<span class="token punctuation">:</span><span class="token function">give
         },
         {
             &quot;name&quot;: &quot;wipe&quot;,
-            &quot;desc&quot;: &quot;Wipes out the given players items.&quot;,
+            &quot;desc&quot;: &quot;Wipes out the given player items.&quot;,
             &quot;params&quot;: [
                 {
                     &quot;name&quot;: &quot;player&quot;,
@@ -314,7 +314,7 @@ Cashier<span class="token punctuation">:</span><span class="token function">give
         },
         {
             &quot;name&quot;: &quot;getUnsentItems&quot;,
-            &quot;desc&quot;: &quot;Returns all unsent gifts stored in the player&#x27;s profile that failed to deliver.\n\n```lua\nlocal Cashier = require(path.to.Cashier).server\n\nlocal unsentItems = Cashier:getUnsentItems(player)\n\nfor itemName, amount in unsentItems do\n\tprint(`{player.Name} has {amount} unsent {itemName}(s).`)\nend\n```&quot;,
+            &quot;desc&quot;: &quot;Returns all unsent gifts stored in the player&#x27;s profile.\n\n```lua\nlocal Cashier = require(path.to.Cashier).server\n\nlocal unsentItems = Cashier:getUnsentItems(player)\n\nfor itemName, amount in unsentItems do\n\tprint(`{player.Name} has {amount} unsent {itemName}(s).`)\nend\n```&quot;,
             &quot;params&quot;: [
                 {
                     &quot;name&quot;: &quot;player&quot;,
@@ -418,7 +418,7 @@ Cashier<span class="token punctuation">:</span><span class="token function">give
         },
         {
             &quot;name&quot;: &quot;getItemPriceAsync&quot;,
-            &quot;desc&quot;: &quot; \n\nRetrieves the price of an item in Robux from MarketplaceService.\n\n```lua\nlocal Cashier = require(path.to.Cashier).server\n\nlocal price = Cashier:getItemPriceAsync(\&quot;VIP\&quot;)\n\nprint(`VIP costs {price} Robux`)\n```&quot;,
+            &quot;desc&quot;: &quot; \n\nRetrieves the price of an item in Robux.\n\n```lua\nlocal Cashier = require(path.to.Cashier).server\n\nlocal price = Cashier:getItemPriceAsync(\&quot;VIP\&quot;)\n\nprint(`VIP costs {price} Robux`)\n```&quot;,
             &quot;params&quot;: [
                 {
                     &quot;name&quot;: &quot;itemName&quot;,
@@ -428,8 +428,8 @@ Cashier<span class="token punctuation">:</span><span class="token function">give
             ],
             &quot;returns&quot;: [
                 {
-                    &quot;desc&quot;: &quot;The price of the item in Robux, or 0 if unavailable&quot;,
-                    &quot;lua_type&quot;: &quot;number&quot;
+                    &quot;desc&quot;: &quot;The price of the item in Robux&quot;,
+                    &quot;lua_type&quot;: &quot;number?&quot;
                 }
             ],
             &quot;function_type&quot;: &quot;method&quot;,
@@ -441,7 +441,7 @@ Cashier<span class="token punctuation">:</span><span class="token function">give
         },
         {
             &quot;name&quot;: &quot;isGiftId&quot;,
-            &quot;desc&quot;: &quot; \n\nChecks if an item ID is a registered gift Developer Product ID.\n\n```lua\nlocal Cashier = require(path.to.Cashier).server\n\nlocal id = 123456\n\nprint(Cashier:isGiftId(id))\n```&quot;,
+            &quot;desc&quot;: &quot; \n\nChecks if the given ID is the gift ID of a registered item.\n\n```lua\nlocal Cashier = require(path.to.Cashier).server\n\nlocal id = 123456\n\nprint(Cashier:isGiftId(id))\n```&quot;,
             &quot;params&quot;: [
                 {
                     &quot;name&quot;: &quot;itemId&quot;,
@@ -490,7 +490,7 @@ Cashier<span class="token punctuation">:</span><span class="token function">give
         },
         {
             &quot;name&quot;: &quot;give&quot;,
-            &quot;desc&quot;: &quot;Gives an item to a player, updates their profile data and client ownership state, and executes the item&#x27;s registered callback.\n\n```lua\nlocal Cashier = require(path.to.Cashier).server\n\nCashier:give(player, \&quot;VIP\&quot;)\n```&quot;,
+            &quot;desc&quot;: &quot;Gives an item to a player.\n\n```lua\nlocal Cashier = require(path.to.Cashier).server\n\nCashier:give(player, \&quot;VIP\&quot;)\n```&quot;,
             &quot;params&quot;: [
                 {
                     &quot;name&quot;: &quot;player&quot;,
@@ -676,7 +676,7 @@ Cashier<span class="token punctuation">:</span><span class="token function">give
         },
         {
             &quot;name&quot;: &quot;InitOptions&quot;,
-            &quot;desc&quot;: &quot;Options for initializing the server-side of Cashier.&quot;,
+            &quot;desc&quot;: &quot;Options for initializing Cashier.&quot;,
             &quot;fields&quot;: [
                 {
                     &quot;name&quot;: &quot;itemsData&quot;,
@@ -701,7 +701,7 @@ Cashier<span class="token punctuation">:</span><span class="token function">give
         }
     ],
     &quot;name&quot;: &quot;CashierServer&quot;,
-    &quot;desc&quot;: &quot;The server-side singleton for Cashier. Handles item registration, purchase validation, receipt processing, and cross-server gifting.&quot;,
+    &quot;desc&quot;: &quot;The server-side of Cashier.&quot;,
     &quot;realm&quot;: [
         &quot;Server&quot;
     ],
