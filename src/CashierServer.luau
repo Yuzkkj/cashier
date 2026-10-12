@@ -24,8 +24,6 @@ local purchaseHistoryStore = DataStoreService:GetDataStore("PurchaseHistory")
 --[=[
 	@type ItemType "DevProduct" | "Gamepass" | "Semipass"
 	@within CashierServer
-
-	Determines the type of an item.
 ]=]
 type ItemType = "DevProduct" | "Gamepass" | "Semipass"
 
@@ -138,7 +136,7 @@ type PurchaseData = {
 	.resetData boolean? -- Determines if the data should be reseted
 	.useMock boolean? -- Determines if Cashier should use mock data and purchases
 
-	Options for initializing the server-side of Cashier.
+	Options for initializing Cashier.
 ]=]
 type InitOptions = {
 	itemsData: { ItemData },
@@ -150,7 +148,7 @@ type InitOptions = {
 	@class CashierServer
 	@server
 	
-	The server-side singleton for Cashier. Handles item registration, purchase validation, receipt processing, and cross-server gifting.
+	The server-side of Cashier.
 ]=]
 local CashierServer = {
 	_giftingCache = {} :: { [Player]: number },
@@ -171,9 +169,9 @@ local CashierServer = {
 --[=[
 	@method init
 	@within CashierServer
-	@param options InitOptions -- Options containing item configurations
+	@param options InitOptions
 	
-	Initializes CashierServer, sets up ProfileStore session handling, registers network endpoints, and connects MarketplaceService purchase events.
+	Initializes Cashier with the given options.
 
 	```lua
 	local Cashier = require(path.to.Cashier).server
@@ -495,21 +493,21 @@ end
 --[=[
 	@method wipe
 	@within CashierServer
-	@param player Player -- The player whose items will be wiped
+	@param player Player
 
-	Wipes out the given players items.
+	Wipes out the items and unsent gifts of the given player.
 ]=]
-function CashierServer.wipe(self: CashierServer, player: Player): ()
+function CashierServer.reset(self: CashierServer, player: Player): ()
 	self._playerStore:RemoveAsync(tostring(player.UserId))
 end
 
 --[=[
 	@method getUnsentItems
 	@within CashierServer
-	@param player Player -- The player to get the unsent items of
+	@param player Player
 	@return { [string]: number } -- A dictionary mapping item names to unsent gift counts
 	
-	Returns all unsent gifts stored in the player's profile that failed to deliver.
+	Returns all unsent gifts of the given player.
 
 	```lua
 	local Cashier = require(path.to.Cashier).server
@@ -533,7 +531,7 @@ end
 --[=[
 	@method getAllItems
 	@within CashierServer
-	@return { Item } -- An array containing all registered items
+	@return { Item }
 
 	Returns an array of all registered items.
 
@@ -554,8 +552,8 @@ end
 --[=[
 	@method getItemsOfType
 	@within CashierServer
-	@param itemType ItemType -- The type of items to retrieve ("DevProduct" | "Gamepass" | "Semipass")
-	@return { Item } -- An array containing items of the specified type
+	@param itemType ItemType
+	@return { Item }
 
 	Retrieves all registered items of a specific type.
 
@@ -578,8 +576,8 @@ end
 --[=[ 
 	@method getItemByName
 	@within CashierServer
-	@param itemName string -- The name of the item to retrieve
-	@return Item? -- The item with the specified name, or nil if not found
+	@param itemName string
+	@return Item?
 
 	Retrieves a registered item by its name.
 
@@ -608,8 +606,8 @@ end
 --[=[ 
 	@method getItemById
 	@within CashierServer
-	@param itemId number -- The ID of the item to retrieve
-	@return Item? -- The item with the specified ID, or nil if not found
+	@param itemId number
+	@return Item?
 
 	Retrieves a registered item by its ID.
 
@@ -624,7 +622,7 @@ end
 	```
 
 	:::info
-	`itemId` can be a standard product/gamepass ID or a gift Developer Product ID.
+	`itemId` can be either an item's `id` or `giftId`.
 	:::
 ]=]
 function CashierServer.getItemById(self: CashierServer, itemId: number): Item?
@@ -643,10 +641,10 @@ end
 	@method getItemPriceAsync
 	@within CashierServer
 	@yields
-	@param itemName string -- The name of the item to get the price of
-	@return number -- The price of the item in Robux, or 0 if unavailable
+	@param itemName string
+	@return number?
 
-	Retrieves the price of an item in Robux from MarketplaceService.
+	Retrieves the price of an item in Robux.
 
 	```lua
 	local Cashier = require(path.to.Cashier).server
@@ -656,10 +654,10 @@ end
 	print(`VIP costs {price} Robux`)
 	```
 ]=]
-function CashierServer.getItemPriceAsync(self: CashierServer, itemName: string): number
+function CashierServer.getItemPriceAsync(self: CashierServer, itemName: string): number?
 	local item = self:getItemByName(itemName)
 	if not item then
-		return 0
+		return nil
 	end
 
 	local success, productInfo = pcall(function()
@@ -669,16 +667,16 @@ function CashierServer.getItemPriceAsync(self: CashierServer, itemName: string):
 		)
 	end)
 
-	return if success and productInfo and productInfo.PriceInRobux then productInfo.PriceInRobux else 0
+	return if success and productInfo and productInfo.PriceInRobux then productInfo.PriceInRobux else nil
 end
 
 --[=[ 
 	@method isGiftId
 	@within CashierServer
-	@param itemId number -- The ID of the item to check
-	@return boolean -- True if the item is a gift ID, false otherwise
+	@param itemId number
+	@return boolean
 
-	Checks if an item ID is a registered gift Developer Product ID.
+	Checks if the given ID is the gift ID of a registered item.
 
 	```lua
 	local Cashier = require(path.to.Cashier).server
@@ -697,9 +695,9 @@ end
 --[=[
 	@method has
 	@within CashierServer
-	@param player Player -- The player to check
-	@param itemName string -- The name of the item
-	@return boolean -- True if the player owns the item, false otherwise
+	@param player Player
+	@param itemName string
+	@return boolean
 
 	Checks if a player owns the specified item.
 	
@@ -723,11 +721,11 @@ end
 --[=[
 	@method give
 	@within CashierServer
-	@param player Player -- The player to grant the item to
-	@param itemName string -- The name of the item
-	@return boolean -- True if the item was successfully given, false otherwise
+	@param player Player
+	@param itemName string
+	@return boolean
 
-	Gives an item to a player, updates their profile data and client ownership state, and executes the item's registered callback.
+	Gives an item to a player.
 	
 	```lua
 	local Cashier = require(path.to.Cashier).server
@@ -769,8 +767,8 @@ end
 --[=[
 	@method purchase
 	@within CashierServer
-	@param player Player -- The player to prompt to purchase
-	@param itemName string -- The name of the item
+	@param player Player
+	@param itemName string
 	@param ... any? -- Any extra params that will be given as arguments to the predicate function, if it exists
 
 	Promps the player to purchase an item.

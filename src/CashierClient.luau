@@ -16,8 +16,6 @@ local localPlayer = Players.LocalPlayer
 --[=[
 	@type ItemType "DevProduct" | "Gamepass" | "Semipass"
 	@within CashierClient
-
-	Determines the type of an item.
 ]=]
 type ItemType = "DevProduct" | "Gamepass" | "Semipass"
 
@@ -51,7 +49,7 @@ type GiftData = {
 	@class CashierClient
 	@client
 
-	The client-side singleton for Cashier. Handles purchase prompts, gifting, item queries, and ownership state.
+	The client-side of Cashier.
 ]=]
 local CashierClient = {
 	_purchasing = false,
@@ -89,7 +87,7 @@ local CashierClient = {
 	@method init
 	@within CashierClient
 	
-	Initializes the client-side of Cashier and begins listening for network replication from the server.
+	Initializes Cashier.
 
 	```lua
 	local Cashier = require(path.to.Cashier).client
@@ -183,7 +181,7 @@ end
 	@yields
 	@return { [string]: number } -- A dictionary mapping item names to unsent gift counts
 	
-	Fetches the list of unsent gifts owned by the local player that were not delivered (e.g. due to delivery failure).
+	Fetches the list of unsent gifts.
 
 	```lua
 	local Cashier = require(path.to.Cashier).client
@@ -202,7 +200,7 @@ end
 --[=[
 	@method getAllItems
 	@within CashierClient
-	@return { Item } -- An array containing all registered items
+	@return { Item }
 
 	Returns an array of all registered items.
 
@@ -227,8 +225,8 @@ end
 --[=[
 	@method getItemsOfType
 	@within CashierClient
-	@param itemType ItemType -- The type of items to retrieve ("DevProduct" | "Gamepass" | "Semipass")
-	@return { Item } -- An array containing items of the specified type
+	@param itemType ItemType
+	@return { Item }
 
 	Retrieves all registered items of a specific type.
 
@@ -255,8 +253,8 @@ end
 --[=[ 
 	@method getItemByName
 	@within CashierClient
-	@param itemName string -- The name of the item to retrieve
-	@return Item? -- The item with the specified name, or nil if not found
+	@param itemName string
+	@return Item?
 
 	Retrieves a registered item by its name.
 
@@ -289,8 +287,8 @@ end
 --[=[ 
 	@method getItemById
 	@within CashierClient
-	@param itemId number -- The ID of the item to retrieve
-	@return Item? -- The item with the specified ID, or nil if not found
+	@param itemId number
+	@return Item?
 
 	Retrieves a registered item by its ID.
 
@@ -328,10 +326,10 @@ end
 	@method getItemPriceAsync
 	@within CashierClient
 	@yields
-	@param itemName string -- The name of the item to get the price of
-	@return number -- The price of the item in Robux, or 0 if unavailable
+	@param itemName string
+	@return number?
 
-	Retrieves the price of an item in Robux from MarketplaceService.
+	Retrieves the price of an item.
 
 	```lua
 	local Cashier = require(path.to.Cashier).client
@@ -341,10 +339,10 @@ end
 	print(`VIP costs {price} Robux`)
 	```
 ]=]
-function CashierClient.getItemPriceAsync(self: CashierClient, itemName: string): number
+function CashierClient.getItemPriceAsync(self: CashierClient, itemName: string): number?
 	local item = self:getItemByName(itemName)
 	if not item then
-		return 0
+		return nil
 	end
 
 	local success, productInfo = pcall(function()
@@ -354,16 +352,16 @@ function CashierClient.getItemPriceAsync(self: CashierClient, itemName: string):
 		)
 	end)
 
-	return if success and productInfo and productInfo.PriceInRobux then productInfo.PriceInRobux else 0
+	return if success and productInfo and productInfo.PriceInRobux then productInfo.PriceInRobux else nil
 end
 
 --[=[ 
 	@method isGiftId
 	@within CashierClient
-	@param itemId number -- The ID to check
-	@return boolean -- True if the ID is a registered gift product ID, false otherwise
+	@param itemId number
+	@return boolean
 
-	Checks if an item ID is a registered gift Developer Product ID.
+	Checks if the given ID is the gift ID of a registered item.
 
 	```lua
 	local Cashier = require(path.to.Cashier).client
@@ -386,8 +384,8 @@ end
 --[=[ 
 	@method has
 	@within CashierClient
-	@param itemName string -- The name of the item to check
-	@return boolean -- True if the player owns the item, false otherwise
+	@param itemName string
+	@return boolean
 
 	Checks if the local player owns a specific item.
 
@@ -408,7 +406,7 @@ end
 --[=[ 
 	@method purchase
 	@within CashierClient
-	@param itemName string -- The name of the item to purchase
+	@param itemName string
 	@param ... any? -- Optional additional arguments passed to the server predicate and callback
 
 	Initiates a purchase prompt for the specified item.
@@ -438,12 +436,12 @@ end
 	@method gift
 	@within CashierClient
 	@yields
-	@param recipientId number -- The UserId of the player to gift the item to
-	@param itemName string -- The name of the item to gift
-	@return boolean -- True if the gift was successfully initiated or delivered, false otherwise
+	@param recipientId number
+	@param itemName string
+	@return boolean -- `true` if the gift was successfully initiated or delivered, `false` otherwise
 	@return string? -- An error message if the gift request failed
 
-	Sends a gift to another user by their UserId.
+	Attempts to send a gift to another user.
 
 	```lua
 	local Cashier = require(path.to.Cashier).client
@@ -466,9 +464,9 @@ end
 --[=[
 	@method onGiftReceived
 	@within CashierClient
-	@param giftData GiftData -- Information about the received gift
+	@param giftData GiftData
 
-	An overridable callback invoked when the local player receives a gift. Can be overridden to display custom UI or notifications.
+	An overridable callback invoked when the player receives a gift.
 
 	```lua
 	local Cashier = require(path.to.Cashier).client
